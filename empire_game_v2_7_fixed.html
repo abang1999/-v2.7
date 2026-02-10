@@ -1,0 +1,2888 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>商业帝国：创业抽卡 V2.7</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111a33; --text:#eaf0ff; --muted:#a9b6dd;
+      --good:#58e3a5; --bad:#ff6b6b; --warn:#ffd166; --line:rgba(255,255,255,.10);
+      --accent:#7aa2ff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:radial-gradient(1200px 600px at 30% 10%, rgba(122,162,255,.18), transparent 60%),
+                 radial-gradient(900px 500px at 80% 30%, rgba(88,227,165,.14), transparent 60%),
+                 var(--bg);
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,PingFang SC,Hiragino Sans GB,Microsoft YaHei,sans-serif;
+    }
+    header{position:sticky; top:0; z-index:10; background:rgba(11,16,32,.86); backdrop-filter: blur(10px); border-bottom:1px solid var(--line);}
+    .wrap{max-width:1200px; margin:0 auto; padding:14px 12px;}
+    .topbar{display:flex; gap:10px; align-items:center; justify-content:space-between;}
+    .brand{display:flex; gap:10px; align-items:center; font-weight:900;}
+    .mini{font-size:12px; color:var(--muted); line-height:1.35}
+    .badge{font-size:12px; padding:4px 8px; border:1px solid var(--line); border-radius:999px; color:var(--muted);}
+    .stats{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid var(--line); font-size:12px; color:var(--muted);}
+    nav{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+    .tab{padding:9px 12px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.04); font-weight:800; font-size:13px; cursor:pointer; user-select:none;}
+    .tab.active{background:rgba(122,162,255,.18); border-color:rgba(122,162,255,.35)}
+    main{padding:14px 0 40px}
+    .grid{display:grid; grid-template-columns: 1.25fr .75fr; gap:12px;}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border-radius:16px; padding:12px;}
+    .card h3{margin:0 0 10px; font-size:14px; color:#dbe6ff; display:flex; align-items:center; justify-content:space-between;}
+    .btn{border:1px solid var(--line); background:linear-gradient(180deg, rgba(122,162,255,.18), rgba(42,58,119,.22)); color:var(--text); padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:900; font-size:13px;}
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{background:rgba(255,255,255,.04); font-weight:700;}
+    .btn.good{background:linear-gradient(180deg, rgba(88,227,165,.20), rgba(88,227,165,.08)); border-color:rgba(88,227,165,.28);}
+    .btn.warn{background:linear-gradient(180deg, rgba(255,209,102,.18), rgba(255,209,102,.08)); border-color:rgba(255,209,102,.25);}
+    .btn.danger{background:linear-gradient(180deg, rgba(255,107,107,.18), rgba(255,107,107,.08)); border-color:rgba(255,107,107,.25);}
+    .btn.small{padding:7px 10px; font-size:12px; border-radius:10px}
+    .btnrow{display:flex; gap:8px; flex-wrap:wrap}
+    input, select, textarea{width:100%; padding:10px 10px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text); outline:none; font-size:13px;}
+    label{font-size:12px; color:var(--muted)}
+    .formgrid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width:600px){.formgrid{grid-template-columns:1fr}}
+    .hr{height:1px; background:var(--line); margin:10px 0}
+    .hint{font-size:12px; color:var(--muted); line-height:1.35; white-space:pre-wrap;}
+    .list{display:flex; flex-direction:column; gap:10px}
+    .person{border:1px solid var(--line); background:rgba(255,255,255,.03); border-radius:14px; padding:10px; display:grid; grid-template-columns: 60px 1fr; gap:10px; cursor:pointer;}
+    .person:active{transform:translateY(1px)}
+    .avatar{width:60px; height:60px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:900; background:rgba(122,162,255,.14); border:1px solid rgba(122,162,255,.20); overflow:hidden;}
+    .avatar img{width:100%; height:100%; object-fit:cover; display:block;}
+    .phead{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+    .pname{font-weight:950; font-size:14px}
+    .ptags{display:flex; gap:6px; flex-wrap:wrap}
+    .tag{font-size:11px; padding:3px 7px; border-radius:999px; border:1px solid var(--line); color:var(--muted); background:rgba(255,255,255,.02);}
+    .tag.good{color:var(--good); border-color:rgba(88,227,165,.25)}
+    .tag.bad{color:var(--bad); border-color:rgba(255,107,107,.25)}
+    .tag.warn{color:var(--warn); border-color:rgba(255,209,102,.25)}
+    .bars{display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; margin-top:8px;}
+    @media (max-width:620px){.bars{grid-template-columns:1fr}}
+    .bar{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted);}
+    .meter{flex:1; height:8px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.03); overflow:hidden;}
+    .fill{height:100%; background:linear-gradient(90deg, rgba(122,162,255,.85), rgba(88,227,165,.85)); width:50%;}
+    .log{max-height:460px; overflow:auto; padding-right:6px;}
+    .logitem{border-left:3px solid rgba(122,162,255,.45); padding:8px 10px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid var(--line); margin-bottom:8px; font-size:13px; line-height:1.35; color:#dbe6ff;}
+    .logitem.good{border-left-color:rgba(88,227,165,.55)}
+    .logitem.bad{border-left-color:rgba(255,107,107,.55)}
+    .logitem.warn{border-left-color:rgba(255,209,102,.55)}
+    .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    @media (max-width:620px){.kpi{grid-template-columns:1fr}}
+    .k{padding:10px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.03);}
+    .k .t{font-size:12px; color:var(--muted)}
+    .k .v{font-size:18px; font-weight:950; margin-top:4px}
+    .overlay{position:fixed; inset:0; background:rgba(0,0,0,.70); z-index:9998; display:flex; align-items:center; justify-content:center; padding:14px;}
+    .overbox{width:min(680px,100%); border-radius:18px; border:1px solid rgba(255,255,255,.18); background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); padding:14px;}
+  
+    .quick{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .qbtn{display:flex; align-items:center; gap:6px; padding:8px 10px; border-radius:999px;
+          border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.05);
+          color:var(--text); font-weight:800; font-size:13px}
+    .qbtn:active{transform:translateY(1px)}
+    .qbtn .ic{width:18px; text-align:center}
+    .list{max-height:56vh; overflow:auto; border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:8px; background:rgba(0,0,0,.18)}
+    .item{padding:10px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); margin:8px 0}
+    .item .meta{display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:12px}
+    .item pre{white-space:pre-wrap; margin:8px 0 0 0; font-family:ui-sans-serif, system-ui; color:var(--text)}
+    .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px;
+          border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); font-size:12px; color:var(--muted)}
+    .field{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .input{flex:1; min-width:160px; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.14);
+           background:rgba(0,0,0,.22); color:var(--text)}
+
+  
+    /* V2.7 UI增强 */
+    .qbtn{display:flex;align-items:center;gap:8px}
+    .qbtn .ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+    .person.ssr{border:1px solid rgba(255,209,102,.55); box-shadow:0 0 0 2px rgba(255,209,102,.18), 0 0 28px rgba(255,209,102,.20)}
+    .rar-SSR{color:#ffe8a3;border-color:rgba(255,209,102,.45);background:rgba(255,209,102,.10)}
+    .tag.player{color:#7aa2ff;border-color:rgba(122,162,255,.45);background:rgba(122,162,255,.10)}
+    .avatarFrame{position:relative}
+    .avatarFrame .spark{position:absolute;inset:-6px;pointer-events:none;opacity:0;transition:.2s}
+    .person.ssr .avatarFrame .spark{opacity:1}
+    .spark:before{content:"";position:absolute;inset:0;border-radius:18px;
+      background:radial-gradient(circle at 20% 20%, rgba(255,209,102,.35), transparent 55%),
+                 radial-gradient(circle at 80% 30%, rgba(122,162,255,.25), transparent 55%),
+                 radial-gradient(circle at 30% 80%, rgba(88,227,165,.22), transparent 55%);
+      filter:blur(2px)}
+    .kpiGrid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px}
+    .kpi{padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+    .kpi .k{font-size:12px;color:var(--muted)}
+    .kpi .v{font-size:16px;font-weight:900;margin-top:2px}
+    .kpi .s{font-size:11px;color:var(--muted);margin-top:4px}
+
+  
+    /* V2.7：头像图库 / SSR仪式感 / 评分可视化 / 竞争对手 */
+    .modalFull{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.66);z-index:80}
+    .modalFull.show{display:flex}
+    .ceremony{width:min(520px,92vw);border-radius:24px;border:1px solid rgba(255,255,255,.10);background:rgba(12,18,34,.92);
+      box-shadow:0 18px 60px rgba(0,0,0,.55);overflow:hidden;position:relative}
+    .ceremony .top{padding:16px 16px 10px;display:flex;justify-content:space-between;align-items:center}
+    .ceremony .name{font-weight:950;font-size:18px}
+    .ceremony .rar{font-weight:950}
+    .burst{position:absolute;inset:-40px;pointer-events:none;opacity:0;transform:scale(.85);transition:.28s}
+    .burst.on{opacity:1;transform:scale(1)}
+    .burst:before{content:"";position:absolute;inset:0;background:
+      radial-gradient(circle at 50% 35%, rgba(255,209,102,.55), transparent 55%),
+      radial-gradient(circle at 20% 70%, rgba(122,162,255,.35), transparent 55%),
+      radial-gradient(circle at 80% 70%, rgba(88,227,165,.28), transparent 55%);}
+    .ceremony .body{padding:10px 16px 18px}
+    .bigAvatar{width:132px;height:132px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;margin:10px auto 12px}
+    .bigAvatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .bigAvatar .svg{width:100%;height:100%}
+    .confetti{position:absolute;inset:0;pointer-events:none;opacity:0}
+    .confetti.on{opacity:1;animation:fall 900ms ease-out forwards}
+    @keyframes fall{0%{transform:translateY(-12px);opacity:0}20%{opacity:1}100%{transform:translateY(40px);opacity:0}}
+    .scoreBars{display:grid;gap:10px;margin-top:10px}
+    .bar{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);padding:10px 12px}
+    .bar .row{display:flex;justify-content:space-between;align-items:center}
+    .bar .lbl{font-size:12px;color:var(--muted)}
+    .bar .val{font-weight:900}
+    .bar .track{height:8px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);margin-top:8px;overflow:hidden}
+    .bar .fill{height:100%;width:0%;background:linear-gradient(90deg, rgba(88,227,165,.85), rgba(122,162,255,.75));}
+    .gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    .avItem{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.04);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
+    .avItem img{width:100%;height:100%;object-fit:cover}
+    .avItem .svg{width:100%;height:100%}
+    .rivalBadge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,106,106,.32);background:rgba(255,106,106,.10);font-weight:900}
+    .rivalCard{border:1px solid rgba(255,106,106,.22);background:rgba(255,255,255,.03)}
+
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div style="width:36px;height:36px;border-radius:12px;background:rgba(122,162,255,.18);display:flex;align-items:center;justify-content:center;border:1px solid rgba(122,162,255,.25)">🏙️</div>
+        <div>
+          商业帝国：创业抽卡 <span class="badge">V2.7</span>
+          <div class="mini">经营｜抽卡｜决策｜行情｜对手</div>
+        </div>
+      </div>
+      <div class="stats" id="topStats"></div>
+    </div>
+    <nav id="tabs"></nav>
+    <div class="quick" id="quickActions"></div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div id="view"></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const pick=(arr)=>arr[Math.floor(Math.random()*arr.length)];
+  const roundHalf=(x)=>Math.round(x*2)/2;
+  const todayStr=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
+  const fmtMoney=(n)=>{
+    const sign=n<0?"-":"";
+    n=Math.abs(n);
+    if(n>=1e9)return sign+(n/1e9).toFixed(2)+"B";
+    if(n>=1e6)return sign+(n/1e6).toFixed(2)+"M";
+    if(n>=1e3)return sign+(n/1e3).toFixed(2)+"K";
+    return sign+n.toFixed(0);
+  };
+  // V2.7：规模/评分/未来结算可视化
+  const activeStaff=()=>state.people.filter(p=>p.active&&!p.dead);
+  const staffCount=()=>activeStaff().length; // 不含主角
+  const scaleLevel=()=>{
+    const n=staffCount();
+    return n>=26?5:n>=13?4:n>=7?3:n>=3?2:1;
+  };
+  const scaleName=(lvl)=>["","微型","小型","中型","大型","巨型"][lvl]||"";
+  const computeScore=()=>{
+    // 人数权重更高，其次规模与资产；资产采用对数避免爆表
+    const n=staffCount();
+    const lvl=scaleLevel();
+    const assets=Math.max(-5_000_000, Math.min(50_000_000, state.company.assets||0));
+    const aPos=Math.max(0, assets);
+    const aNeg=Math.max(0, -assets);
+    const head = n*18;               // 人数主权重
+    const scale = lvl*120;           // 规模
+    const asset = Math.log10(1+aPos)*220 - Math.log10(1+aNeg)*180; // 资产正负都计入
+    const stability = Math.max(0, (3-state.company.negativeStreak))*35; // 负资产连月惩罚
+    const raw = head + scale + asset + stability;
+    return Math.max(0, Math.round(raw));
+  };
+
+  const computeScoreBreakdown=()=>{
+    const n=staffCount();
+    const lvl=scaleLevel();
+    const assets=Math.max(-5_000_000, Math.min(50_000_000, state.company.assets||0));
+    const aPos=Math.max(0, assets);
+    const aNeg=Math.max(0, -assets);
+    const head = n*18;
+    const scale = lvl*120;
+    const asset = Math.log10(1+aPos)*220 - Math.log10(1+aNeg)*180;
+    const stability = Math.max(0, (3-state.company.negativeStreak))*35;
+    const total = Math.max(0, Math.round(head+scale+asset+stability));
+    return {total, head, scale, asset, stability, n, lvl, assets};
+  };
+  const sumAssetsEffect=(effects)=>{
+    let s=0;
+    for(const e of (effects||[])){
+      if(e.kind==="assets") s += (e.amt ?? e.amount ?? 0);
+    }
+    return s;
+  };
+  const upcomingFlowBuckets=(monthsAhead=6)=>{
+    const out=[];
+    for(let i=0;i<monthsAhead;i++){
+      const due = addMonths({y:state.company.year,m:state.company.month}, i+1);
+      const items = (state.company.delayedEffects||[]).filter(d=>d.dueY===due.y && d.dueM===due.m);
+      const amt = items.reduce((s,it)=>s+sumAssetsEffect(it.effects||[]),0);
+      out.push({y:due.y,m:due.m,amt,items});
+    }
+    return out;
+  };
+  const upcomingFlowMini=()=>{
+    const buckets=upcomingFlowBuckets(3);
+    const plus=buckets.filter(b=>b.amt>0).reduce((s,b)=>s+b.amt,0);
+    const minus=buckets.filter(b=>b.amt<0).reduce((s,b)=>s+b.amt,0);
+    if(plus===0 && minus===0) return "未来3月 无待结算";
+    return `未来3月 待结算 ${plus>0?("+"+fmtMoney(plus)):"+0"} / ${minus<0?("-"+fmtMoney(-minus)):"-0"}`;
+  };
+
+  const addMonthsAbs=(y,m,add)=>{
+    let yy=y, mm=m+add;
+    while(mm>12){ mm-=12; yy++; }
+    while(mm<1){ mm+=12; yy--; }
+    return {y:yy, m:mm};
+  };
+  const isDue=(dueY,dueM,curY,curM)=> (dueY<curY) || (dueY===curY && dueM<=curM);
+
+  const toast=(msg)=>{
+    const t=el("div",{style:"position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.65);color:var(--text);font-weight:800;font-size:13px"},[msg]);
+    document.body.appendChild(t);
+    setTimeout(()=>{t.style.opacity="0"; t.style.transition="opacity .25s";},1200);
+    setTimeout(()=>t.remove(),1600);
+  };
+
+  const showCeremony=(p)=>{
+    const modal=document.getElementById("ceremonyModal");
+    const burst=document.getElementById("burst");
+    const conf=document.getElementById("confetti");
+    const name=document.getElementById("cerName");
+    const sub=document.getElementById("cerSub");
+    const av=document.getElementById("cerAvatar");
+    const text=document.getElementById("cerText");
+    name.textContent = "SSR 招募成功！";
+    sub.textContent = `${p.name} · ${positionName(p.position)} · ${p.gender==="M"?"男":"女"}`;
+    av.innerHTML="";
+    // render avatar
+    const node = renderAvatar(p);
+    if(node instanceof HTMLElement){
+      if(node.tagName.toLowerCase()==="img") av.appendChild(node);
+      else av.appendChild(node);
+    } else {
+      av.textContent="⭐";
+    }
+    text.textContent = "稀有角色加入！建议尽快安排岗位与直属关系，以发挥最大收益。";
+    modal.classList.add("show");
+    burst.classList.add("on");
+    conf.classList.add("on");
+    setTimeout(()=>conf.classList.remove("on"), 950);
+  };
+  const hideCeremony=()=>{
+    const modal=document.getElementById("ceremonyModal");
+    const burst=document.getElementById("burst");
+    modal.classList.remove("show");
+    burst.classList.remove("on");
+  };
+  window.addEventListener("DOMContentLoaded", ()=>{
+    const btn=document.getElementById("cerClose");
+    if(btn) btn.onclick=hideCeremony;
+    const modal=document.getElementById("ceremonyModal");
+    if(modal) modal.addEventListener("click",(e)=>{ if(e.target===modal) hideCeremony(); });
+  });
+
+  // 事件文案模板（V2.7：更丰富的叙事与细节）
+  const EVENT_TONE = {
+    good: ["✨","🌿","🚀","🟢","🎉","💡"],
+    warn: ["🟠","📰","🌧️","⚠️","🧩","🔎"],
+    bad:  ["🔻","⛈️","🧨","🟥","💥","🕳️"]
+  };
+  const emojiOf = (type)=>pick(EVENT_TONE[type]||["•"]);
+  const story = (type, title, lines)=>{
+    const icon=emojiOf(type);
+    return `${icon} ${title}\n` + lines.map(s=>"• "+s).join("\n");
+  };
+  const pickLine = (arr)=>arr[Math.floor(Math.random()*arr.length)];
+  const descMarket = (m)=>{
+    if(m>=1.25) return "资金涌入，客户预算放大，竞争更激烈但机会也更多。";
+    if(m>=1.05) return "需求偏旺，增长空间打开，投放/扩张更容易见效。";
+    if(m>=0.95) return "整体平稳，效率与组织执行力更关键。";
+    if(m>=0.80) return "需求偏弱，客户更谨慎，回款周期可能拉长。";
+    return "行业寒冬，现金为王，裁撤与转型的压力显著上升。";
+  };
+  const randomNews = ()=>{
+    const headlines=[
+      "监管口径更新，行业合规成本上升。",
+      "头部竞品发布新功能，市场关注度被吸走一部分。",
+      "渠道平台调整推荐机制，获客方式需要重新适配。",
+      "上游原材料价格波动，供应链开始重新议价。",
+      "融资环境转冷，投资人更看重现金流。",
+      "消费者偏好变化，新品类冒头。",
+      "出海政策利好，海外订单询盘增多。"
+    ];
+    return pickLine(headlines);
+  };
+  const opBuffFlavors = [
+    "你在复盘会上把关键指标拆到了最小粒度，团队终于看懂了增长杠杆。",
+    "你把一堆“感觉”变成了可验证的假设，试验进度明显加快。",
+    "你把客户反馈按痛点聚类，产品路线瞬间清晰了。",
+    "你亲自上阵跟进销售漏斗，成交节奏变得更稳定。",
+    "你用一个小工具自动化了重复工作，大家都松了一口气。"
+  ];
+  const opDebuffFlavors = [
+    "你被各种杂事打断，重要的决策迟迟没有落地。",
+    "一次沟通误会让团队返工，大家的耐心被磨掉了一些。",
+    "你低估了执行难度，目标定得太满，焦虑开始蔓延。",
+    "你在关键节点犹豫，错过了一个窗口期。",
+    "你被外界噪音牵着走，路线开始摇摆。"
+  ];
+  const loveGoodFlavors = [
+    "他们在加班后一起吃了夜宵，回程路上把很多心结聊开了。",
+    "一次跨部门协作意外顺畅，默契让他们靠得更近。",
+    "他们主动把工作边界谈清楚，关系变得更成熟。"
+  ];
+  const loveBadFlavors = [
+    "项目压力把情绪放大，小矛盾升级成争吵。",
+    "办公室流言蜚语让双方都不舒服，沟通变得小心翼翼。",
+    "一次误会没及时解释，冷战开始拖长。"
+  ];
+  const layoffFlavors = [
+    "社交平台出现了几条负面讨论，潜在候选人开始观望。",
+    "客户听到裁员消息后更谨慎，部分订单延期确认。",
+    "内部士气受到影响，关键岗位的离职风险上升。"
+  ];
+  const crisisFlavors = {
+    stock: ["指数跳水，风险偏好骤降。","融资窗口收窄，现金流被放到显微镜下。","客户预算冻结，采购审批变慢。"],
+    geo:   ["外部摩擦升级，跨境业务受限。","汇率波动加剧，结算成本上升。","供应链不确定性提升，交付周期拉长。"],
+    family:["情绪被牵动，注意力很难集中。","请假与临时交接让进度被打断。","团队自发分担工作，组织凝聚力被考验。"],
+    sick:  ["医疗与请假成本叠加，节奏被迫放慢。","关键任务需要重新分配，协作成本上升。","同事们情绪低落，沟通更敏感。"],
+    death: ["团队受到强烈冲击，情绪需要时间消化。","关键知识与交接缺口需要立刻填补。","你不得不重新调整组织与目标。"]
+  };
+
+  // 决策事件（V2.7）：A/B/C 多选项，不同成本/概率/后果；含行业专属事件包
+  const EFFECT = {
+    assets:(amt)=>({kind:"assets", amt}),
+    playerAb:(k,delta)=>({kind:"playerAb", k, delta}),
+    worldMarket:(indKey,delta)=>({kind:"worldMarket", indKey, delta}),
+    moraleBuff:(months)=>({kind:"moraleBuff", months}),
+    // 延迟结算：delayM个月后执行effects，并记录一条档案
+    delayed:(delayM,label,effects)=>({kind:"delayed", delayM, label, effects}),
+    // 事件链：delayM个月后触发指定决策事件
+    scheduleEvent:(delayM,eventId)=>({kind:"scheduleEvent", delayM, eventId}),
+  };
+
+  // FX：给事件链/填充事件使用的简写（与EFFECT保持一致）
+  const FX = {
+    assets:(amt)=>EFFECT.assets(amt),
+    playerAb:(k,delta)=>EFFECT.playerAb(k,delta),
+    worldMarket:(indKey,delta)=>EFFECT.worldMarket(indKey,delta),
+    moraleBuff:(months)=>EFFECT.moraleBuff(months),
+    delayed:(delayM,label,effects)=>EFFECT.delayed(delayM,label,effects),
+    scheduleEvent:(delayM,eventId)=>EFFECT.scheduleEvent(delayM,eventId),
+  };
+
+  const applyEffects=(effects, meta={})=>{
+    for(const e of (effects||[])){
+      if(e.kind==="assets") state.company.assets = Math.round(state.company.assets + e.amt);
+      else if(e.kind==="playerAb"){
+        const before=state.player.abilities[e.k];
+        state.player.abilities[e.k]=roundHalf(clamp(before+e.delta,1,10));
+      }else if(e.kind==="worldMarket"){
+        const before=industryMarket(e.indKey);
+        state.company.worldMarkets[e.indKey]=clamp(roundHalf(before+e.delta),0.6,1.4);
+      }else if(e.kind==="moraleBuff"){
+        state.company.moraleBuffMonths = Math.max(state.company.moraleBuffMonths||0, e.months);
+      }else if(e.kind==="delayed"){
+        const due = addMonthsAbs(state.company.year, state.company.month, e.delayM);
+        state.company.delayedEffects.push({
+          dueY: due.y, dueM: due.m,
+          label: e.label||"延迟结算",
+          effects: e.effects||[],
+          from: meta.from||""
+        });
+      }else if(e.kind==="scheduleEvent"){
+        const due = addMonthsAbs(state.company.year, state.company.month, e.delayM);
+        state.company.scheduledEvents.push({
+          dueY: due.y, dueM: due.m,
+          eventId: e.eventId,
+          from: meta.from||""
+        });
+      }
+    }
+  };
+  const roll=(p)=>Math.random()<p;
+
+  // 事件链节点映射（id -> node）
+  const DECISION_EVENT_MAP = {};
+
+  const DECISION_EVENTS = {
+    generic: [
+      {
+        id:"pr_pitch",
+        title:"融资路演：一小时改变命运",
+        desc:[
+          "投资人说他们喜欢你的方向，但想看更硬的增长证据。",
+          "你可以选择更激进的打法，也可以更稳地做产品与现金流。"
+        ],
+        options:[
+          {key:"A", label:"加大投放+补贴，冲一波增长（成本高，可能爆）", cost:9000, p:0.55,
+           suc:[EFFECT.assets(+22000), EFFECT.playerAb("行动力",+0.5), EFFECT.moraleBuff(2)],
+           fail:[EFFECT.assets(-14000), EFFECT.playerAb("洞察力",-0.5)]},
+          {key:"B", label:"把指标做扎实，先跑通留存（稳健）", cost:4000, p:0.75,
+           suc:[EFFECT.assets(+9000), EFFECT.playerAb("管理能力",+0.5)],
+           fail:[EFFECT.assets(-3000)]},
+          {key:"C", label:"拒绝这轮，专注现金流（短痛换长期）", cost:0, p:0.85,
+           suc:[EFFECT.assets(+4000), EFFECT.playerAb("洞察力",+0.5)],
+           fail:[EFFECT.playerAb("行动力",-0.5)]},
+        ]
+      },
+      {
+        id:"pr_crisis",
+        title:"公关风波：一句话引发误解",
+        desc:[
+          "社交媒体出现了关于你们的误读，讨论正在扩散。",
+          "你要选：强势反击、温和澄清、还是暂时沉默。"
+        ],
+        options:[
+          {key:"A", label:"强势回应+律师函（有震慑但易反噬）", cost:6000, p:0.58,
+           suc:[EFFECT.assets(+6000), EFFECT.playerAb("领导能力",+0.5)],
+           fail:[EFFECT.assets(-12000), EFFECT.playerAb("情商",-0.5)]},
+          {key:"B", label:"温和澄清+开放采访（更可信）", cost:3500, p:0.78,
+           suc:[EFFECT.assets(+4500), EFFECT.playerAb("情商",+0.5), EFFECT.moraleBuff(2)],
+           fail:[EFFECT.assets(-3000)]},
+          {key:"C", label:"暂时沉默，专注交付（省钱但会被解读）", cost:0, p:0.62,
+           suc:[EFFECT.playerAb("专业能力",+0.5)],
+           fail:[EFFECT.assets(-6000)]},
+        ]
+      }
+    ],
+    byIndustry: {
+      food:[
+        { id:"fd_supplier", title:"供应商涨价：原材料要不要换？",
+          desc:["上游突然涨价，毛利被压缩。","你可以换供应商、提价、或优化菜单。"],
+          options:[
+            {key:"A", label:"紧急更换供应商（风险：品质波动）", cost:3000, p:0.62,
+             suc:[EFFECT.assets(+8000), EFFECT.playerAb("行动力",+0.5)],
+             fail:[EFFECT.assets(-7000), EFFECT.playerAb("管理能力",-0.5)]},
+            {key:"B", label:"小幅提价+讲好故事（更稳）", cost:1200, p:0.76,
+             suc:[EFFECT.assets(+5000), EFFECT.playerAb("情商",+0.5)],
+             fail:[EFFECT.assets(-2000)]},
+            {key:"C", label:"优化菜单/减少损耗（慢热但扎实）", cost:800, p:0.82,
+             suc:[EFFECT.assets(+4500), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.playerAb("行动力",-0.5)]},
+          ]
+        }
+      ],
+      tech:[
+        { id:"tc_outage", title:"线上故障：宕机 30 分钟",
+          desc:["监控报警爆炸，用户在评论区开喷。","你要选：立刻赔付、技术攻坚、还是先压热搜。"],
+          options:[
+            {key:"A", label:"全量补偿（成本高，口碑回升）", cost:7000, p:0.75,
+             suc:[EFFECT.assets(+6000), EFFECT.playerAb("领导能力",+0.5), EFFECT.moraleBuff(2)],
+             fail:[EFFECT.assets(-6000)]},
+            {key:"B", label:"集中攻坚+复盘机制（提升组织）", cost:2500, p:0.80,
+             suc:[EFFECT.assets(+4500), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.assets(-3000)]},
+            {key:"C", label:"先公关降温（省钱但可能反噬）", cost:800, p:0.60,
+             suc:[EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.assets(-8000), EFFECT.playerAb("情商",-0.5)]},
+          ]
+        }
+      ],
+      edu:[
+        { id:"ed_policy", title:"政策风向：合规要求加严",
+          desc:["监管口径更新，宣传与收费方式都要更谨慎。","你要选：全面整改、局部调整、或观望。"],
+          options:[
+            {key:"A", label:"全面整改（短期痛，长期稳）", cost:5000, p:0.82,
+             suc:[EFFECT.assets(+6000), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.assets(-3000)]},
+            {key:"B", label:"局部调整（平衡成本）", cost:2500, p:0.72,
+             suc:[EFFECT.assets(+4000), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.assets(-3500)]},
+            {key:"C", label:"观望（省钱但风险）", cost:0, p:0.58,
+             suc:[EFFECT.assets(+2000)],
+             fail:[EFFECT.assets(-9000)]},
+          ]
+        }
+      ],
+      manu:[
+        { id:"mn_quality", title:"质量抽检：一批货被退回",
+          desc:["客户反馈瑕疵，可能要返工。","你要选：召回返工、折价处理、或强硬沟通。"],
+          options:[
+            {key:"A", label:"召回返工（成本高，信誉更稳）", cost:8000, p:0.74,
+             suc:[EFFECT.assets(+9000), EFFECT.playerAb("专业能力",+0.5)],
+             fail:[EFFECT.assets(-7000)]},
+            {key:"B", label:"折价处理（止血）", cost:2500, p:0.70,
+             suc:[EFFECT.assets(+5000), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.assets(-4500)]},
+            {key:"C", label:"强硬沟通（省钱但风险）", cost:600, p:0.55,
+             suc:[EFFECT.assets(+3000), EFFECT.playerAb("领导能力",+0.5)],
+             fail:[EFFECT.assets(-11000), EFFECT.playerAb("情商",-0.5)]},
+          ]
+        }
+      ],
+      ret:[
+        {
+          id:"ret_flashsale",
+          title:"大促节点：要不要打“闪促”",
+          desc:[
+            "平台给了你一个黄金坑位，但需要配合更激进的折扣与投放。",
+            "这可能带来爆量，也可能把利润打薄甚至引发差评。"
+          ],
+          options:[
+            {key:"A", label:"冲顶流量：重补贴+强投放（回报延迟，波动大）", cost:12000, p:0.60,
+             suc:[EFFECT.delayed(2,"大促回流订单", [EFFECT.assets(+38000)]), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.assets(-9000), EFFECT.playerAb("情商",-0.5)]},
+            {key:"B", label:"稳健促销：控折扣、做会员复购", cost:5000, p:0.75,
+             suc:[EFFECT.assets(+11000), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.assets(-2500)]},
+            {key:"C", label:"放弃坑位：保利润与口碑", cost:0, p:0.85,
+             suc:[EFFECT.assets(+2500), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.worldMarket("ret",-0.5)]},
+          ],
+        },
+        {
+          id:"ret_supply",
+          title:"供货危机：爆单还是断货",
+          desc:["爆款突然爆单，上游说最快也要两周补货。","你需要在现金、口碑与交付之间做选择。"],
+          options:[
+            {key:"A", label:"高价空运补货（贵但保口碑）", cost:8000, p:0.75,
+             suc:[EFFECT.assets(+16000), EFFECT.playerAb("行动力",+0.5)],
+             fail:[EFFECT.assets(-6000)]},
+            {key:"B", label:"预售排队（解释清楚，接受延迟）", cost:1200, p:0.70,
+             suc:[EFFECT.delayed(1,"预售尾款到账", [EFFECT.assets(+9000)]), EFFECT.playerAb("情商",+0.5)],
+             fail:[EFFECT.assets(-4000), EFFECT.playerAb("领导能力",-0.5)]},
+            {key:"C", label:"砍掉活动（止损）", cost:0, p:0.80,
+             suc:[EFFECT.assets(+1500), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.assets(-2500)]},
+          ],
+        }
+      ],
+      bio:[
+        {
+          id:"bio_trial",
+          title:"临床试验：伦理与速度的拉扯",
+          desc:["合作医院愿意给你绿色通道，但要求更严格的数据与流程。","你可以投入更多资源加速，也可以稳扎稳打。"],
+          options:[
+            {key:"A", label:"加码投入：请CRO+加班推进（回报延迟）", cost:15000, p:0.60,
+             suc:[EFFECT.delayed(3,"试验阶段性里程碑款", [EFFECT.assets(+52000)]), EFFECT.playerAb("专业能力",+0.5)],
+             fail:[EFFECT.assets(-12000), EFFECT.playerAb("管理能力",-0.5)]},
+            {key:"B", label:"稳健推进：把流程补齐", cost:6000, p:0.78,
+             suc:[EFFECT.delayed(2,"里程碑款（较小）", [EFFECT.assets(+22000)]), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.assets(-4500)]},
+            {key:"C", label:"暂缓试验：先做商业验证", cost:0, p:0.82,
+             suc:[EFFECT.assets(+4000), EFFECT.playerAb("学习能力",+0.5)],
+             fail:[EFFECT.worldMarket("bio",-0.5)]},
+          ],
+        },
+        {
+          id:"bio_patent",
+          title:"专利窗口：要不要现在提交",
+          desc:["竞争对手的动向不明，你担心被抢先。","但提交专利会消耗现金与精力。"],
+          options:[
+            {key:"A", label:"马上提交（抢时间）", cost:9000, p:0.70,
+             suc:[EFFECT.playerAb("洞察力",+0.5), EFFECT.scheduleEvent(2,"bio_licensing")],
+             fail:[EFFECT.assets(-5000)]},
+            {key:"B", label:"先做更完整的实验数据", cost:3500, p:0.75,
+             suc:[EFFECT.playerAb("专业能力",+0.5), EFFECT.delayed(2,"专利申请带来的BD机会", [EFFECT.assets(+14000)])],
+             fail:[EFFECT.playerAb("行动力",-0.5)]},
+            {key:"C", label:"按兵不动（省钱但有风险）", cost:0, p:0.80,
+             suc:[EFFECT.assets(+1500)],
+             fail:[EFFECT.worldMarket("bio",-0.5)]},
+          ],
+        },
+        {
+          id:"bio_licensing",
+          title:"授权谈判：大公司想要更低分成",
+          desc:["对方愿意给你渠道与背书，但压价很狠。","你要在现金流与长期利益之间选择。"],
+          options:[
+            {key:"A", label:"接受：拿现金，换资源", cost:0, p:0.80,
+             suc:[EFFECT.assets(+26000), EFFECT.playerAb("情商",+0.5)],
+             fail:[EFFECT.assets(-4000)]},
+            {key:"B", label:"坚持：提高分成（可能谈崩）", cost:1200, p:0.55,
+             suc:[EFFECT.delayed(2,"更高分成回款", [EFFECT.assets(+34000)]), EFFECT.playerAb("领导能力",+0.5)],
+             fail:[EFFECT.assets(-8000)]},
+            {key:"C", label:"换伙伴：找第二家谈", cost:2500, p:0.65,
+             suc:[EFFECT.scheduleEvent(1,"bio_licensing"), EFFECT.assets(+2000)],
+             fail:[EFFECT.assets(-6000)]},
+          ],
+        }
+      ],
+      media:[
+        {
+          id:"media_algo",
+          title:"算法改版：推荐机制突然变了",
+          desc:["平台流量结构调整，你的曝光明显下降。","你可以追热点，也可以做内容升级。"],
+          options:[
+            {key:"A", label:"追热点：高频更新（短期爆发）", cost:3500, p:0.65,
+             suc:[EFFECT.assets(+12000), EFFECT.playerAb("行动力",+0.5)],
+             fail:[EFFECT.assets(-2800), EFFECT.playerAb("管理能力",-0.5)]},
+            {key:"B", label:"做系列：提升内容质量（回报延迟）", cost:5000, p:0.75,
+             suc:[EFFECT.delayed(2,"系列内容长尾回流", [EFFECT.assets(+18000)]), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.assets(-3200)]},
+            {key:"C", label:"稳住社区：做私域与会员", cost:2200, p:0.78,
+             suc:[EFFECT.assets(+7000), EFFECT.playerAb("情商",+0.5)],
+             fail:[EFFECT.assets(-2000)]},
+          ],
+        },
+      ],
+      fin:[
+        {
+          id:"fin_compliance",
+          title:"合规审查：一纸要求",
+          desc:["监管抽查到你们的业务流程，对风控和KYC提出更高要求。","你可以硬扛成本，也可以缩业务保安全。"],
+          options:[
+            {key:"A", label:"全面整改：请律师+上系统（贵但稳）", cost:11000, p:0.80,
+             suc:[EFFECT.assets(+9000), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.assets(-7000)]},
+            {key:"B", label:"局部整改：先过关再迭代（折中）", cost:6000, p:0.70,
+             suc:[EFFECT.delayed(1,"合规通过后的客户回流", [EFFECT.assets(+15000)]), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.assets(-5000)]},
+            {key:"C", label:"缩业务：保现金（可能损失机会）", cost:0, p:0.78,
+             suc:[EFFECT.assets(+3500), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.worldMarket("fin",-0.5)]},
+          ],
+        }
+      ],
+      game:[
+        {
+          id:"game_launch",
+          title:"版本上线：要不要硬上",
+          desc:["版本快到节点，但还有几个bug没修完。","你可以延期，或选择上线后热修。"],
+          options:[
+            {key:"A", label:"按期上线+热修（风险高，可能爆）", cost:7000, p:0.60,
+             suc:[EFFECT.assets(+26000), EFFECT.playerAb("行动力",+0.5), EFFECT.scheduleEvent(1,"game_liveops")],
+             fail:[EFFECT.assets(-9000), EFFECT.playerAb("情商",-0.5)]},
+            {key:"B", label:"延期两周：把体验打磨好（回报延迟）", cost:3000, p:0.78,
+             suc:[EFFECT.delayed(1,"口碑发酵带来付费", [EFFECT.assets(+16000)]), EFFECT.playerAb("专业能力",+0.5)],
+             fail:[EFFECT.assets(-2500)]},
+            {key:"C", label:"砍掉功能：先保稳定", cost:0, p:0.82,
+             suc:[EFFECT.assets(+3000), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.playerAb("创新力",-0.5)]},
+          ],
+        },
+        {
+          id:"game_liveops",
+          title:"LiveOps：节日活动怎么做",
+          desc:["社区期待值很高，但你们产能有限。","是做大活动，还是做小而美？"],
+          options:[
+            {key:"A", label:"大活动：大奖池+联动（回报延迟）", cost:9000, p:0.65,
+             suc:[EFFECT.delayed(2,"活动回流+复购", [EFFECT.assets(+30000)]), EFFECT.playerAb("领导能力",+0.5)],
+             fail:[EFFECT.assets(-6000)]},
+            {key:"B", label:"小而美：轻量活动+体验优化", cost:3500, p:0.78,
+             suc:[EFFECT.assets(+10000), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.assets(-2500)]},
+            {key:"C", label:"不做活动：专注修bug", cost:0, p:0.80,
+             suc:[EFFECT.assets(+2000), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.worldMarket("game",-0.5)]},
+          ],
+        },
+      ],
+      newenergy:[
+        {
+          id:"ne_policy",
+          title:"政策窗口：补贴与备案",
+          desc:["地方出台新补贴，但备案材料复杂，且可能抽查。","你可以冲窗口，也可以先完善体系。"],
+          options:[
+            {key:"A", label:"冲窗口：全力备案拿补贴（回报延迟）", cost:9000, p:0.65,
+             suc:[EFFECT.delayed(2,"补贴到账", [EFFECT.assets(+42000)]), EFFECT.playerAb("行动力",+0.5)],
+             fail:[EFFECT.assets(-8000)]},
+            {key:"B", label:"稳健：先把质量体系做齐", cost:5000, p:0.78,
+             suc:[EFFECT.assets(+12000), EFFECT.playerAb("管理能力",+0.5)],
+             fail:[EFFECT.assets(-4000)]},
+            {key:"C", label:"观望：省钱但可能错过", cost:0, p:0.80,
+             suc:[EFFECT.assets(+1500)],
+             fail:[EFFECT.worldMarket("newenergy",-0.5)]},
+          ],
+        }
+      ],
+      infra:[
+        {
+          id:"infra_bid",
+          title:"工程投标：低价拿标还是保利润",
+          desc:["甲方压价，希望你给出更低报价。","低价能拿到标，但现金流压力会更大。"],
+          options:[
+            {key:"A", label:"低价抢标（回报延迟）", cost:4000, p:0.65,
+             suc:[EFFECT.delayed(3,"工程进度款", [EFFECT.assets(+50000)]), EFFECT.playerAb("领导能力",+0.5)],
+             fail:[EFFECT.assets(-6000)]},
+            {key:"B", label:"合理报价：强调质量与交付", cost:1800, p:0.70,
+             suc:[EFFECT.delayed(2,"进度款（较小）", [EFFECT.assets(+24000)]), EFFECT.playerAb("情商",+0.5)],
+             fail:[EFFECT.assets(-3500)]},
+            {key:"C", label:"放弃：不做亏钱项目", cost:0, p:0.82,
+             suc:[EFFECT.assets(+2500), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.worldMarket("infra",-0.5)]},
+          ],
+        }
+      ],
+      agri:[
+        {
+          id:"agri_weather",
+          title:"极端天气：供应不稳",
+          desc:["原料受天气影响波动，成本上涨且交付不确定。","你可以锁价，也可以改配方。"],
+          options:[
+            {key:"A", label:"锁价囤货（贵但稳）", cost:7000, p:0.75,
+             suc:[EFFECT.assets(+14000), EFFECT.playerAb("洞察力",+0.5)],
+             fail:[EFFECT.assets(-6000)]},
+            {key:"B", label:"改配方：做替代原料（回报延迟）", cost:4500, p:0.70,
+             suc:[EFFECT.delayed(2,"替代方案带来利润回升", [EFFECT.assets(+18000)]), EFFECT.playerAb("创新力",+0.5)],
+             fail:[EFFECT.assets(-3500), EFFECT.playerAb("专业能力",-0.5)]},
+            {key:"C", label:"硬扛：不调整", cost:0, p:0.78,
+             suc:[EFFECT.assets(+1200)],
+             fail:[EFFECT.worldMarket("agri",-0.5)]},
+          ],
+        }
+      ]
+    }
+  };
+  // V2.7：行业事件量翻倍（每行业10~20个），更强行业风味（用生成器补齐）
+  const ensureIndustryEvents=()=>{
+    const indKeys = INDUSTRIES.map(i=>i.key);
+    for(const k of indKeys){
+      if(!DECISION_EVENTS[k]) DECISION_EVENTS[k]=[];
+      const arr=DECISION_EVENTS[k];
+      const need = k==="generic"?12:16;
+      if(arr.length>=need) continue;
+      const theme = industryMeta(k).name;
+      const fillers = [];
+      const mk=(idSuffix,title,desc,opts)=>({id:`${k}_f_${idSuffix}_${Math.floor(Math.random()*1e6)}`, title, desc, options:opts});
+      for(let i=0;i<need-arr.length;i++){
+        const t = [
+          `${theme}：渠道合作谈判`,
+          `${theme}：产品小迭代上线`,
+          `${theme}：关键客户试用`,
+          `${theme}：供应链/交付挑战`,
+          `${theme}：口碑与舆情波动`,
+          `${theme}：人才争夺战`
+        ][i%6];
+        const d = `行业风向：${randomNews()}\\n${descMarket(industryMarket(k))}\\n你需要在成本、速度与风险之间做选择。`;
+        const baseCost = Math.round(8000 + i*1200);
+        fillers.push(mk(i, t, d, [
+          {label:"A. 保守推进", hint:`成本-${fmtMoney(Math.round(baseCost*0.6))}｜成功率80%｜收益较小`, cost:Math.round(baseCost*0.6),
+            successP:0.80,
+            onSuccess:[FX.delayed(2, `${t}（稳健回款）`, [FX.assets(Math.round(baseCost*1.2))])],
+            onFail:[FX.assets(-Math.round(baseCost*0.3))]
+          },
+          {label:"B. 平衡策略", hint:`成本-${fmtMoney(baseCost)}｜成功率60%｜收益中等`, cost:baseCost,
+            successP:0.60,
+            onSuccess:[FX.delayed(2, `${t}（正常回款）`, [FX.assets(Math.round(baseCost*1.8))])],
+            onFail:[FX.assets(-Math.round(baseCost*0.5))]
+          },
+          {label:"C. 激进冲刺", hint:`成本-${fmtMoney(Math.round(baseCost*1.6))}｜成功率40%｜收益更高（可能连锁）`, cost:Math.round(baseCost*1.6),
+            successP:0.40,
+            onSuccess:[FX.delayed(3, `${t}（爆发回款）`, [FX.assets(Math.round(baseCost*3.2))]),
+                       FX.scheduleEvent(1, `${k}_chain_seed`)],
+            onFail:[FX.assets(-Math.round(baseCost*1.0))]
+          }
+        ]));
+      }
+      DECISION_EVENTS[k].push(...fillers);
+    }
+  };
+
+  // V2.7：事件链分支树（3~5节点）
+  const registerChainTrees=()=>{
+    const mkNode=(id,title,desc,options)=>({id,title,desc,options});
+    const makeChain=(k)=>{
+      const theme=industryMeta(k).name;
+      const seedId = `${k}_chain_seed`;
+      const n2a = `${k}_chain_2a`; const n2b=`${k}_chain_2b`; const n2c=`${k}_chain_2c`;
+      const n3a = `${k}_chain_3a`; const n3b=`${k}_chain_3b`; const n3c=`${k}_chain_3c`;
+      const n4a = `${k}_chain_4a`; const n4b=`${k}_chain_4b`; const n4c=`${k}_chain_4c`;
+
+      // Seed：选方向
+      DECISION_EVENT_MAP[seedId]=mkNode(seedId,
+        `${theme}事件链：关键转折点`,
+        `一条更长的故事线开始了。\\n行业环境：${descMarket(industryMarket(k))}\\n你要押注哪条路径？`,
+        [
+          {label:"A. 押注增长（营销/渠道）", hint:"成本中｜成功率55%｜后续3-4步链", cost:12000, successP:0.55,
+            onSuccess:[FX.delayed(2, "增长路径：首轮回款", [FX.assets(22000)]), FX.scheduleEvent(1,n2a)],
+            onFail:[FX.assets(-7000), FX.scheduleEvent(1,n2b)]
+          },
+          {label:"B. 押注产品（迭代/体验）", hint:"成本中｜成功率60%｜后续3-5步链", cost:11000, successP:0.60,
+            onSuccess:[FX.delayed(2, "产品路径：口碑发酵", [FX.assets(20000)]), FX.scheduleEvent(1,n2c)],
+            onFail:[FX.assets(-6000), FX.scheduleEvent(1,n2b)]
+          },
+          {label:"C. 押注效率（流程/交付）", hint:"成本低｜成功率75%｜收益较稳", cost:7000, successP:0.75,
+            onSuccess:[FX.delayed(1, "效率路径：成本下降", [FX.assets(12000)]), FX.scheduleEvent(1,n2b)],
+            onFail:[FX.assets(-5000)]
+          },
+        ]
+      );
+
+      // Node2a：增长继续
+      DECISION_EVENT_MAP[n2a]=mkNode(n2a, `${theme}事件链②：渠道谈判`, "对方给出更苛刻的条件，你要怎么谈？",
+        [
+          {label:"A. 让利换规模", hint:"成功率55%｜回款大但利润薄", cost:9000, successP:0.55,
+            onSuccess:[FX.delayed(2,"渠道放量回款",[FX.assets(35000)]), FX.scheduleEvent(1,n3a)],
+            onFail:[FX.assets(-9000), FX.scheduleEvent(1,n3b)]
+          },
+          {label:"B. 坚持定价", hint:"成功率45%｜回款中但利润好", cost:6000, successP:0.45,
+            onSuccess:[FX.delayed(2,"高毛利回款",[FX.assets(26000)]), FX.scheduleEvent(1,n3a)],
+            onFail:[FX.assets(-6000), FX.scheduleEvent(1,n3b)]
+          },
+          {label:"C. 分阶段合作", hint:"成功率65%｜回款较稳", cost:7000, successP:0.65,
+            onSuccess:[FX.delayed(1,"阶段性回款",[FX.assets(18000)]), FX.scheduleEvent(1,n3c)],
+            onFail:[FX.assets(-6500)]
+          },
+        ]);
+
+      // Node2b：危机修复/效率
+      DECISION_EVENT_MAP[n2b]=mkNode(n2b, `${theme}事件链②：内部修复`, "组织开始出现摩擦，你需要先稳住哪一块？",
+        [
+          {label:"A. 加薪留人", hint:"成本高｜成功率70%｜降低离职风险", cost:15000, successP:0.70,
+            onSuccess:[FX.delayed(1,"团队稳定带来回款",[FX.assets(18000)])],
+            onFail:[FX.assets(-12000), FX.scheduleEvent(1,n3b)]
+          },
+          {label:"B. 重构流程", hint:"成本中｜成功率60%｜后续收益", cost:10000, successP:0.60,
+            onSuccess:[FX.delayed(2,"效率提升回款",[FX.assets(24000)]), FX.scheduleEvent(1,n3c)],
+            onFail:[FX.assets(-9000), FX.scheduleEvent(1,n3b)]
+          },
+          {label:"C. 砍掉边缘线", hint:"成本低｜成功率75%｜但有舆论风险", cost:5000, successP:0.75,
+            onSuccess:[FX.delayed(1,"聚焦带来回款",[FX.assets(14000)]), FX.scheduleEvent(1,n3c)],
+            onFail:[FX.assets(-7000)]
+          },
+        ]);
+
+      // Node2c：产品口碑
+      DECISION_EVENT_MAP[n2c]=mkNode(n2c, `${theme}事件链②：产品拐点`, "一个关键功能要不要现在上线？",
+        [
+          {label:"A. 现在上线", hint:"成功率50%｜收益高｜风险高", cost:14000, successP:0.50,
+            onSuccess:[FX.delayed(2,"口碑爆发回款",[FX.assets(42000)]), FX.scheduleEvent(1,n3a)],
+            onFail:[FX.assets(-14000), FX.scheduleEvent(1,n3b)]
+          },
+          {label:"B. 再打磨一个月", hint:"成功率70%｜收益中", cost:8000, successP:0.70,
+            onSuccess:[FX.delayed(2,"口碑稳步回款",[FX.assets(28000)]), FX.scheduleEvent(1,n3c)],
+            onFail:[FX.assets(-8000)]
+          },
+          {label:"C. 灰度发布", hint:"成功率65%｜收益稳", cost:9000, successP:0.65,
+            onSuccess:[FX.delayed(1,"灰度回款",[FX.assets(20000)]), FX.scheduleEvent(1,n3c)],
+            onFail:[FX.assets(-9000)]
+          },
+        ]);
+
+      // Node3*：分支收束到终章
+      DECISION_EVENT_MAP[n3a]=mkNode(n3a, `${theme}事件链③：扩大规模`, "业务增长后，你要怎么扩张？",
+        [
+          {label:"A. 扩招冲刺", hint:"成功率55%｜未来回款更高", cost:18000, successP:0.55,
+            onSuccess:[FX.delayed(3,"扩张回款",[FX.assets(65000)]), FX.scheduleEvent(1,n4a)],
+            onFail:[FX.assets(-15000), FX.scheduleEvent(1,n4b)]
+          },
+          {label:"B. 合作外包", hint:"成功率65%｜回款中", cost:12000, successP:0.65,
+            onSuccess:[FX.delayed(2,"外包交付回款",[FX.assets(42000)]), FX.scheduleEvent(1,n4c)],
+            onFail:[FX.assets(-12000)]
+          },
+          {label:"C. 慢一点更稳", hint:"成功率80%｜回款稳", cost:8000, successP:0.80,
+            onSuccess:[FX.delayed(2,"稳健回款",[FX.assets(32000)]), FX.scheduleEvent(1,n4c)],
+            onFail:[FX.assets(-8000)]
+          },
+        ]);
+
+      DECISION_EVENT_MAP[n3b]=mkNode(n3b, `${theme}事件链③：风波与公关`, "外部质疑出现，你如何处理？",
+        [
+          {label:"A. 公开回应", hint:"成功率60%｜成本中", cost:9000, successP:0.60,
+            onSuccess:[FX.delayed(2,"公关成功回款",[FX.assets(26000)]), FX.scheduleEvent(1,n4c)],
+            onFail:[FX.assets(-12000)]
+          },
+          {label:"B. 私下解决", hint:"成功率55%｜成本低", cost:5000, successP:0.55,
+            onSuccess:[FX.delayed(2,"私了回款",[FX.assets(20000)]), FX.scheduleEvent(1,n4b)],
+            onFail:[FX.assets(-9000)]
+          },
+          {label:"C. 先沉默", hint:"成功率40%｜可能更糟", cost:2000, successP:0.40,
+            onSuccess:[FX.delayed(1,"侥幸躲过回款",[FX.assets(12000)])],
+            onFail:[FX.assets(-15000), FX.scheduleEvent(1,n4b)]
+          },
+        ]);
+
+      DECISION_EVENT_MAP[n3c]=mkNode(n3c, `${theme}事件链③：团队重组`, "组织边界需要明确，你怎么做？",
+        [
+          {label:"A. 明确汇报线", hint:"成功率70%｜回款稳", cost:6000, successP:0.70,
+            onSuccess:[FX.delayed(2,"组织稳定回款",[FX.assets(24000)]), FX.scheduleEvent(1,n4c)],
+            onFail:[FX.assets(-6000)]
+          },
+          {label:"B. 赋权给干部", hint:"成功率55%｜回款中", cost:8000, successP:0.55,
+            onSuccess:[FX.delayed(2,"干部带队回款",[FX.assets(30000)]), FX.scheduleEvent(1,n4a)],
+            onFail:[FX.assets(-9000)]
+          },
+          {label:"C. 临时项目制", hint:"成功率60%｜回款中", cost:7000, successP:0.60,
+            onSuccess:[FX.delayed(2,"项目制回款",[FX.assets(26000)]), FX.scheduleEvent(1,n4c)],
+            onFail:[FX.assets(-7000)]
+          },
+        ]);
+
+      // Node4*：终章
+      DECISION_EVENT_MAP[n4a]=mkNode(n4a, `${theme}事件链终章：巅峰一搏`, "最后一步：你要冲刺上市/大客户/并购？",
+        [
+          {label:"A. 冲刺大客户", hint:"成功率45%｜回款极高", cost:22000, successP:0.45,
+            onSuccess:[FX.delayed(3,"终章回款：大客户",[FX.assets(120000)])],
+            onFail:[FX.assets(-26000)]
+          },
+          {label:"B. 冲刺并购", hint:"成功率35%｜回款极高", cost:26000, successP:0.35,
+            onSuccess:[FX.delayed(4,"终章回款：并购",[FX.assets(150000)])],
+            onFail:[FX.assets(-32000)]
+          },
+          {label:"C. 不赌了稳住", hint:"成功率80%｜回款中", cost:12000, successP:0.80,
+            onSuccess:[FX.delayed(2,"终章回款：稳健",[FX.assets(60000)])],
+            onFail:[FX.assets(-12000)]
+          },
+        ]);
+
+      DECISION_EVENT_MAP[n4b]=mkNode(n4b, `${theme}事件链终章：止损与转向`, "你决定把损失控制在可承受范围：",
+        [
+          {label:"A. 收缩保命", hint:"成功率85%｜回款较小", cost:6000, successP:0.85,
+            onSuccess:[FX.delayed(1,"止损回款",[FX.assets(16000)])],
+            onFail:[FX.assets(-8000)]
+          },
+          {label:"B. 转投新渠道", hint:"成功率60%｜回款中", cost:9000, successP:0.60,
+            onSuccess:[FX.delayed(2,"新渠道回款",[FX.assets(28000)])],
+            onFail:[FX.assets(-12000)]
+          },
+          {label:"C. 退出项目", hint:"成功率95%｜损失小", cost:2000, successP:0.95,
+            onSuccess:[FX.assets(-2000)], onFail:[FX.assets(-5000)]
+          },
+        ]);
+
+      DECISION_EVENT_MAP[n4c]=mkNode(n4c, `${theme}事件链终章：稳步增长`, "你把系统打磨到能持续赚钱：",
+        [
+          {label:"A. 标准化复制", hint:"成功率70%｜回款中高", cost:12000, successP:0.70,
+            onSuccess:[FX.delayed(3,"复制回款",[FX.assets(70000)])],
+            onFail:[FX.assets(-12000)]
+          },
+          {label:"B. 深耕复购", hint:"成功率80%｜回款中", cost:9000, successP:0.80,
+            onSuccess:[FX.delayed(2,"复购回款",[FX.assets(42000)])],
+            onFail:[FX.assets(-9000)]
+          },
+          {label:"C. 维护现金流", hint:"成功率90%｜回款稳", cost:6000, successP:0.90,
+            onSuccess:[FX.delayed(1,"现金流回款",[FX.assets(24000)])],
+            onFail:[FX.assets(-6000)]
+          },
+        ]);
+    };
+
+    // 先为每个行业注册
+    for(const ind of INDUSTRIES){
+      if(ind.key==="generic") continue;
+      makeChain(ind.key);
+    }
+  };
+
+
+  const pickDecisionEvent=()=>{
+    const ind=state.company.industry;
+    const pool=[...(DECISION_EVENTS.byIndustry[ind]||[]), ...DECISION_EVENTS.generic];
+    return pool.length? pick(pool): null;
+  };
+
+  const openDecision=(ev)=>{
+    state.ui.pendingDecision = {
+      id: ev.id,
+      title: ev.title,
+      desc: ev.desc,
+      options: ev.options
+    };
+  };
+
+  const resolveDecision=(optKey)=>{
+    const ev=state.ui.pendingDecision;
+    if(!ev) return;
+    const opt = ev.options.find(o=>o.key===optKey);
+    if(!opt) return;
+    // pay cost
+    if(opt.cost) state.company.assets = Math.round(state.company.assets - opt.cost);
+    const ok = roll(opt.p);
+    const title = ok ? `${ev.title} · 结果：成功` : `${ev.title} · 结果：失利`;
+    const lines = [
+      ...(ev.desc||[]),
+      `选择：${opt.key}. ${opt.label}`,
+      `成本：${fmtMoney(opt.cost||0)}｜成功率：${Math.round(opt.p*100)}%｜结果：${ok?"成功":"失利"}`
+    ];
+    if(ok) applyEffects(opt.suc); else applyEffects(opt.fail);
+    // add a short outcome line
+    lines.push(ok ? "局面朝你希望的方向推进了一步。" : "这次代价不小，但你也获得了经验。");
+    log(ok?"good":"bad", story(ok?"good":"bad", title, lines));
+    const ov=document.getElementById("decisionOverlay"); if(ov) ov.remove();
+    state.ui.pendingDecision=null;
+    state.ui.decisionOverlayOpen=false;
+    save(); render();
+  };
+
+
+  const el=(tag,attrs={},kids=[])=>{
+    const e=document.createElement(tag);
+    for(const [k,v] of Object.entries(attrs)){
+      if(k==="class")e.className=v;
+      else if(k==="html")e.innerHTML=v;
+      else if(k==="style")e.setAttribute("style",v);
+      else if(k.startsWith("on")&&typeof v==="function")e.addEventListener(k.slice(2),v);
+      else if(v!=null)e.setAttribute(k,v);
+    }
+    for(const c of kids){ if(c==null)continue; if(typeof c==="string")e.appendChild(document.createTextNode(c)); else e.appendChild(c); }
+    return e;
+  };
+  const meter=(val)=>el("div",{class:"meter"},[el("div",{class:"fill",style:`width:${clamp(val/10*100,0,100)}%`})]);
+
+  const ABILS=[["innov","创新力"],["act","行动力"],["insight","洞察力"],["manage","管理能力"],["lead","领导能力"],["prof","专业能力"],["eq","情商"],["learn","学习能力"]];
+  const ROLES=["产品","运营","销售","市场","研发","财务","HR","法务","设计","数据","供应链","客服"];
+  const POSITIONS=[
+    {key:"intern",name:"实习生",minSize:1, baseSalary:1200, minManage:0},
+    {key:"staff", name:"员工",minSize:1, baseSalary:2200, minManage:0},
+    {key:"senior",name:"高级员工",minSize:3, baseSalary:3500, minManage:2.5},
+    {key:"mgr",   name:"主管",minSize:6, baseSalary:5200, minManage:4.0},
+    {key:"dir",   name:"经理",minSize:10,baseSalary:7600, minManage:5.5},
+    {key:"vp",    name:"总监",minSize:16,baseSalary:10500,minManage:6.5},
+    {key:"cxo",   name:"副总裁",minSize:25,baseSalary:14500,minManage:7.5},
+    {key:"owner", name:"公司所有人",minSize:1,baseSalary:0, minManage:0},
+  ];
+  const INDUSTRIES=[
+    { key:"tech",  name:"科技/软件", baseRev:52000 },
+    { key:"edu",   name:"教育/培训", baseRev:36000 },
+    { key:"ret",   name:"零售/电商", baseRev:42000 },
+    { key:"food",  name:"餐饮/食品", baseRev:30000 },
+    { key:"bio",   name:"生物/医疗", baseRev:48000 },
+    { key:"manu",  name:"制造/供应链", baseRev:45000 },
+    { key:"media", name:"媒体/内容", baseRev:34000 },
+    { key:"fin",   name:"金融/咨询", baseRev:56000 },
+    { key:"game",  name:"游戏/文娱", baseRev:41000 },
+    { key:"newenergy", name:"新能源/环保", baseRev:47000 },
+    { key:"infra", name:"基建/工程", baseRev:43000 },
+    { key:"agri",  name:"农业/食品科技", baseRev:32000 },
+  ];
+
+  // V2.7：竞争对手系统（规模达到阈值解锁）
+  const RIVAL_NAMES = ["星芒集团","北辰资本系","黑曜科技","万象实业","风暴连锁","海岚教育","极光传媒","澄明咨询","丰穗农业","远航制造"];
+  const ensureRival=()=>{
+    const r = state.company.rivals || (state.company.rivals={unlocked:false,heat:0,lastAttack:0,shields:0,name:"",industry:""});
+    if(!r.name) r.name = pick(RIVAL_NAMES);
+    if(!r.industry) r.industry = pick(INDUSTRIES.filter(x=>x.key!=="generic")).key;
+  };
+  const rivalUnlocked=()=> (scaleLevel()>=3); // 中型规模开始遭遇对手
+  const unlockRivalIfNeeded=()=>{
+    ensureRival();
+    const r=state.company.rivals;
+    if(!r.unlocked && rivalUnlocked()){
+      r.unlocked=true;
+      r.heat=10;
+      log("warn", story("warn", "竞争对手登场", [
+        `${r.name} 开始在你所在的赛道周边活动（对手行业：${industryMeta(r.industry).name}）。`,
+        "从现在起，你会遭遇对手的干扰：挖人、价格战、舆论战、渠道封锁等。"
+      ]));
+    }
+  };
+  const rivalAttack=()=>{
+    ensureRival();
+    const r=state.company.rivals;
+    if(!r.unlocked) return;
+    // heat grows with size
+    const grow = 2 + scaleLevel()*2 + Math.max(0, staffCount()-10)*0.2;
+    r.heat = Math.min(100, r.heat + grow);
+    // shield reduces chance
+    const baseP = clamp(0.10 + r.heat/250, 0.10, 0.55);
+    const shield = (r.shields||0);
+    const p = clamp(baseP - shield*0.06, 0.05, 0.45);
+    if(Math.random() > p) return;
+    const ctx = computeContext();
+    const attacks = [
+      {k:"price", title:"价格战：对手降价抢单", apply:()=>{
+        const loss = Math.round(Math.max(4000, state.company.assets*0.01));
+        state.company.assets -= loss;
+        log("bad", story("bad", "竞争对手：价格战", [
+          `${r.name} 发起降价，部分客户摇摆。`,
+          `短期损失：-${fmtMoney(loss)}`
+        ]));
+      }},
+      {k:"poach", title:"挖人：对手高薪挖角", apply:()=>{
+        const cand = activeStaff().filter(e=>e.position!=="Owner");
+        if(!cand.length){ return; }
+        const who = pick(cand);
+        const chance = clamp(0.25 + (r.heat/200) - (who.abilities.eq-5)*0.03, 0.10, 0.65);
+        if(Math.random()<chance){
+          who.active=false; who.left=true;
+          log("bad", story("bad", "竞争对手：挖人成功", [
+            `${r.name} 给出更高薪与更好头衔，${who.name} 选择离职。`,
+            "提示：提高关键岗位薪资/晋升、建立直属关系与羁绊可降低风险。"
+          ]));
+        }else{
+          log("warn", story("warn", "竞争对手：挖人未遂", [
+            `${r.name} 试图挖走骨干，但被你及时稳住。`
+          ]));
+        }
+      }},
+      {k:"pr", title:"舆论战：负面话题发酵", apply:()=>{
+        const mult = 1.06 + r.heat/220;
+        state.company.rivalDebuff = {months:2, rev:0.92, resign:mult};
+        log("bad", story("bad", "竞争对手：舆论战", [
+          `外界出现针对你的负面话题，团队情绪更敏感。`,
+          "效果：2个月内 营收×0.92；离职倾向上升。"
+        ]));
+      }},
+      {k:"channel", title:"渠道封锁：合作门槛抬高", apply:()=>{
+        const fee = 6000 + scaleLevel()*2500;
+        state.company.assets -= fee;
+        state.company.rivalDebuff = {months:1, rev:0.90, resign:1.05};
+        log("bad", story("bad", "竞争对手：渠道封锁", [
+          `${r.name} 影响渠道规则，你不得不支付额外成本并延迟订单。`,
+          `额外成本：-${fmtMoney(fee)}；1个月营收×0.90`
+        ]));
+      }},
+    ];
+    pick(attacks).apply();
+    r.lastAttack = (r.lastAttack||0)+1;
+  };
+  const RARITIES=[{key:"R",p:0.70,mult:0.95,cls:""},{key:"SR",p:0.25,mult:1.05,cls:"warn"},{key:"SSR",p:0.05,mult:1.18,cls:"good"}];
+  const GENDERS=["女","男","非二元"];
+  const randAge=()=>Math.floor(rnd(22,55));
+  const pickRarity=()=>{const x=Math.random();let a=0;for(const r of RARITIES){a+=r.p;if(x<=a)return r.key;}return "R";}
+  const rarityMeta=(k)=>RARITIES.find(r=>r.key===k)||RARITIES[0];
+  const rankOf=(k)=>POSITIONS.findIndex(p=>p.key===k);
+  const posByKey=(k)=>POSITIONS.find(p=>p.key===k)||POSITIONS[1];
+  const positionName=(k)=>posByKey(k).name;
+
+  // AI风默认头像（SVG data URI）
+  const svgToData=(svg)=>"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+  const AI_PORTRAITS=[
+    svgToData(`<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
+      <defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#7aa2ff"/><stop offset="1" stop-color="#58e3a5"/></linearGradient></defs>
+      <rect width="256" height="256" rx="36" fill="#0b1020"/>
+      <circle cx="140" cy="92" r="64" fill="url(#g)" opacity="0.35"/>
+      <circle cx="96" cy="156" r="72" fill="url(#g)" opacity="0.22"/>
+      <path d="M62 190c18-46 116-46 134 0" fill="none" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="112" cy="122" r="10" fill="#eaf0ff"/><circle cx="154" cy="122" r="10" fill="#eaf0ff"/>
+      <path d="M118 150c10 10 22 10 32 0" fill="none" stroke="#eaf0ff" stroke-width="8" stroke-linecap="round"/>
+    </svg>`),
+    svgToData(`<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
+      <defs><radialGradient id="r" cx="35%" cy="25%" r="70%"><stop stop-color="#ffd166"/><stop offset="1" stop-color="#7aa2ff"/></radialGradient></defs>
+      <rect width="256" height="256" rx="36" fill="#0b1020"/>
+      <circle cx="128" cy="132" r="84" fill="url(#r)" opacity="0.32"/>
+      <path d="M70 210c20-60 96-60 116 0" fill="none" stroke="#a9b6dd" stroke-width="10" stroke-linecap="round" opacity="0.8"/>
+      <path d="M94 108c18-26 50-26 68 0" fill="none" stroke="#eaf0ff" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="110" cy="134" r="9" fill="#eaf0ff"/><circle cx="146" cy="134" r="9" fill="#eaf0ff"/>
+      <path d="M116 164c14 10 26 10 40 0" fill="none" stroke="#eaf0ff" stroke-width="7" stroke-linecap="round"/>
+    </svg>`),
+    svgToData(`<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
+      <defs><linearGradient id="g2" x1="0" x2="1"><stop stop-color="#ff6b6b"/><stop offset="1" stop-color="#7aa2ff"/></linearGradient></defs>
+      <rect width="256" height="256" rx="36" fill="#0b1020"/>
+      <path d="M28 170c40-120 160-120 200 0" fill="none" stroke="url(#g2)" stroke-width="22" stroke-linecap="round" opacity="0.35"/>
+      <circle cx="128" cy="120" r="64" fill="url(#g2)" opacity="0.20"/>
+      <circle cx="104" cy="118" r="9" fill="#eaf0ff"/><circle cx="152" cy="118" r="9" fill="#eaf0ff"/>
+      <path d="M112 148c10 14 22 14 32 0" fill="none" stroke="#eaf0ff" stroke-width="8" stroke-linecap="round"/>
+      <path d="M70 88c16-18 34-26 58-26s42 8 58 26" fill="none" stroke="#a9b6dd" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+    </svg>`),
+  ];
+  const randomPortrait=()=>pick(AI_PORTRAITS);
+
+  // Skills 70/30
+  const SKILLS_POS=[
+    {key:"sales_genius",name:"销售天才",type:"pos",desc:"公司营收 x1.04（常驻）",apply:(ctx,p)=>ctx.revMult*=1.04},
+    {key:"ops_saver",name:"成本管家",type:"pos",desc:"员工薪酬成本 x0.94",apply:(ctx,p)=>ctx.payrollMult*=0.94},
+    {key:"hr_stable",name:"留才专家",type:"pos",desc:"全员离职概率 x0.80",apply:(ctx,p)=>ctx.resignMult*=0.80},
+    {key:"rd_engine",name:"研发引擎",type:"pos",desc:"研发点获取 x1.30（预留）",apply:(ctx,p)=>ctx.rdMult*=1.30},
+    {key:"crisis_shield",name:"危机公关",type:"pos",desc:"年度变故损失 x0.75",apply:(ctx,p)=>ctx.crisisMult*=0.75},
+    {key:"market_eye",name:"市场嗅觉",type:"pos",desc:"世界行情波动略偏利好（小优势）",apply:(ctx,p)=>ctx.marketLuck+=0.12},
+    {key:"leader_aura",name:"领袖光环",type:"pos",desc:"羁绊增长 x1.40；团队更稳定",apply:(ctx,p)=>{ctx.bondMult*=1.40;ctx.resignMult*=0.92;}},
+    {key:"love_maker",name:"恋爱幸运星",type:"pos",desc:"恋爱事件更偏向正向结果",apply:(ctx,p)=>{ctx.loveLuck+=0.16;}},
+  ];
+  const SKILLS_NEG=[
+    {key:"mood_swing",name:"情绪不稳",type:"neg",desc:"行情<0.90时自身离职概率翻倍（+上限）",apply:(ctx,p)=>{}},
+    {key:"procrastinate",name:"拖延症",type:"neg",desc:"行动力 -1.0（永久）",apply:(ctx,p)=>{}},
+    {key:"conflict",name:"人际冲突",type:"neg",desc:"更容易引发冲突/分手事件",apply:(ctx,p)=>{ctx.loveLuck-=0.14;}},
+    {key:"high_cost",name:"高消费欲",type:"neg",desc:"薪资需求 +20%，低薪更易离职",apply:(ctx,p)=>{}},
+    {key:"fragile_heart",name:"情感脆弱",type:"neg",desc:"恋爱负面事件会额外掉属性",apply:(ctx,p)=>{ctx.loveFragile+=0.22;}},
+  ];
+  const pickSkill=(role,rar)=>{
+    const isNeg=Math.random()<0.30;
+    const pool=isNeg?SKILLS_NEG:SKILLS_POS;
+    const bias={
+      "销售":["sales_genius","market_eye"],
+      "运营":["ops_saver","market_eye"],
+      "HR":["hr_stable","leader_aura","love_maker"],
+      "研发":["rd_engine","crisis_shield"],
+      "市场":["market_eye","sales_genius"],
+      "财务":["ops_saver","crisis_shield"],
+      "法务":["crisis_shield","ops_saver"],
+      "数据":["market_eye","rd_engine"],
+      "产品":["rd_engine","leader_aura"],
+      "供应链":["ops_saver","crisis_shield"],
+      "客服":["hr_stable","leader_aura","love_maker"],
+      "设计":["market_eye","sales_genius"],
+    };
+    const prefer=(bias[role]||[]);
+    const preferPool=pool.filter(s=>prefer.includes(s.key));
+    const chance=(rar==="SSR"?0.65:rar==="SR"?0.45:0.25);
+    if(preferPool.length && Math.random()<chance) return pick(preferPool);
+    return pick(pool);
+  };
+
+  // Save
+  const SAVE_KEY="empire_game_save_v2_7_full";
+  const defaultWorldMarkets=()=>{
+    const m={};
+    for(const ind of INDUSTRIES) m[ind.key]=roundHalf(rnd(0.85,1.15));
+    return m;
+  };
+  const defaultState=()=>({
+    ver:"2.7",
+    createdAt: todayStr(),
+    company:{
+      name:"未命名公司",
+      industry:"tech",
+      month:1, year:1,
+      assets:140000,
+      revenueLast:0,
+      layoffsThisYear:0,
+      layoffsLast6M:0,
+      teamActivityUsedMonth:-1,
+      annualMeetingUsedYear:0,
+      crisesPlan:[],
+      scheduledEvents:[],
+      delayedEffects:[],
+      worldMarkets: defaultWorldMarkets(),
+      negativeStreak: 0,
+      rescueBuffMonths: 0,
+      negativeSwitchCount: 0,
+      moraleBuffMonths: 0,
+      gameOver:false,
+      gameOverReason:"",
+    },
+    player:null,
+    people:[],
+    relations:{},
+    bonds:{},
+    love:{},
+    log:[],
+    archive:[],
+    gacha:{ pulls:0, pitySSR:0 },
+    ui:{ tab:"dashboard", pendingDecision:null, decisionOverlayOpen:false, showArchive:false, showChangelog:false }
+  });
+  // V2.7 hotfix：iOS某些文件浏览器 WebView 禁用 localStorage（会抛 SecurityError）
+  const SafeStore = {
+    ok: true,
+    get(key){
+      try{ return SafeStore.get(key); }catch(e){ this.ok=false; return null; }
+    },
+    set(key,val){
+      try{ SafeStore.set(key,val); }catch(e){ this.ok=false; }
+    }
+  };
+
+  const load=()=>{try{const raw=SafeStore.get(SAVE_KEY);if(!raw)return null;const st=JSON.parse(raw);if(!st||!st.company)return null;return st;}catch(e){return null;}}
+  const save=()=>SafeStore.set(SAVE_KEY, JSON.stringify(state));
+  let state=load()||defaultState();
+
+  const log=(type,text)=>{const entry={t:todayStr(),type,text,month:state.company.month,year:state.company.year,industry:state.company.industry};state.log.unshift(entry);state.log=state.log.slice(0,260);state.archive.unshift(entry);state.archive=state.archive.slice(0,800);};
+
+  // Character
+  const newAbilities=(base=5,spread=2.2)=>{const o={};for(const [k] of ABILS)o[k]=roundHalf(clamp(rnd(base-spread,base+spread),1,10));return o;}
+  const abilityTotal=(ab)=>ABILS.reduce((s,[k])=>s+ab[k],0);
+  const genAbilitiesByRarity=(rar)=>{const r=rarityMeta(rar);const base=5.0*r.mult;const ab=newAbilities(base,2.3);for(const [k] of ABILS)ab[k]=roundHalf(clamp(ab[k]+(rar==="SSR"?0.5:rar==="SR"?0.2:0),1,10));return ab;}
+  const calcBaseSalary=(posKey,ab)=>{const p=posByKey(posKey);const factor=0.75+(ab.prof+ab.lead+ab.act)/30*0.7;return p.baseSalary*factor;}
+  const mkPerson=(opts={})=>{
+    const id=opts.id || ("P"+Math.random().toString(16).slice(2)+Date.now().toString(16));
+    const kind=opts.kind ?? "employee";
+    const role=opts.role ?? pick(ROLES);
+    const rarity=opts.rarity ?? pickRarity();
+    const name=opts.name ?? ("成员"+Math.floor(rnd(10,99)));
+    const portrait=opts.portrait ?? (opts.useAiPortrait!==false ? randomPortrait() : null);
+    const abilities=opts.abilities ?? genAbilitiesByRarity(rarity);
+    const skill=opts.skill ?? pickSkill(role,rarity);
+    if(skill?.key==="procrastinate") abilities.act = roundHalf(clamp(abilities.act-1.0,1,10));
+    const posKey=opts.position ?? (kind==="partner"?"dir":"staff");
+    const salary=opts.salary ?? Math.round(calcBaseSalary(posKey, abilities));
+    const equity=opts.equity ?? (kind==="partner"? roundHalf(clamp(rnd(1,8),1,30)) : 0);
+    return {id,name,portrait,role,kind,rarity,gender:opts.gender??pick(GENDERS),age:opts.age??Math.floor(rnd(22,55)),abilities,skill,position:posKey,salary:Math.round(salary),equity,tenureM:0,active:true,resigned:false,dead:false};
+  };
+
+  const scheduleYearCrises=()=>{
+    const months=new Set();
+    while(months.size<2) months.add(Math.floor(rnd(1,13)));
+    state.company.crisesPlan=[...months].sort((a,b)=>a-b);
+  };
+
+  if(!state.player){
+    state.player=mkPerson({kind:"player",rarity:"SR",name:"创业者",role:"产品"});
+    state.player.id="player";
+    state.player.position="owner";
+    state.player.salary=0;
+    scheduleYearCrises();
+    log("good","欢迎来到 V2.7！主角是『公司所有人』且不会离职。资产允许为负，但连续3个月负资产会失败。");
+    save();
+  } else {
+    state.player.id="player";
+    state.player.kind="player";
+    state.player.position="owner";
+    state.player.salary=0;
+    if(!state.company.worldMarkets) state.company.worldMarkets=defaultWorldMarkets();
+    if(state.company.negativeStreak==null) state.company.negativeStreak=0;
+    if(state.company.rescueBuffMonths==null) state.company.rescueBuffMonths=0;
+    if(state.company.negativeSwitchCount==null) state.company.negativeSwitchCount=0;
+    if(state.company.gameOver==null){state.company.gameOver=false; state.company.gameOverReason="";}
+    if(!state.love) state.love={};
+    save();
+  }
+
+  const findPerson=(id)=>state.people.find(p=>p.id===id);
+  const companySize=()=>state.people.filter(p=>p.active&&!p.dead).length+1;
+  const activeEmployees=()=>state.people.filter(p=>p.active&&!p.dead&&p.kind==="employee");
+  const activePartners=()=>state.people.filter(p=>p.active&&!p.dead&&p.kind==="partner");
+  const marketLabel=(m)=>m>=1.25?"牛市":m>=1.05?"偏好":m>=0.95?"平稳":m>=0.80?"偏弱":"寒冬";
+  const industryMeta=(k)=>INDUSTRIES.find(i=>i.key===k)||INDUSTRIES[0];
+  const industryMarket=(k)=>state.company.worldMarkets?.[k] ?? 1.0;
+  const currentIndustry=()=>industryMeta(state.company.industry);
+
+  // Org/bonds
+  const getSubs=(lid)=>state.relations[lid]||[];
+  const setSubs=(lid,subs)=>state.relations[lid]=subs;
+  const bondKey=(l,s)=>`${l}|${s}`;
+  const getBond=(l,s)=>state.bonds[bondKey(l,s)]??0;
+  const setBond=(l,s,v)=>state.bonds[bondKey(l,s)]=v;
+  const removeFromRelations=(pid)=>{
+    delete state.relations[pid];
+    for(const lid of Object.keys(state.relations)){
+      state.relations[lid]=state.relations[lid].filter(x=>x!==pid);
+      if(state.relations[lid].length===0) delete state.relations[lid];
+    }
+    for(const k of Object.keys(state.bonds)){
+      if(k.startsWith(pid+"|")||k.endsWith("|"+pid)) delete state.bonds[k];
+    }
+  };
+
+  // Love helpers
+  const loveKey=(a,b)=>[a,b].sort().join("|");
+  const loveStageText=(s)=>s==="dating"?"恋爱中":s==="conflict"?"冲突中":"未知";
+  const getLove=(a,b)=>state.love[loveKey(a,b)]||null;
+  const setLove=(a,b,obj)=>state.love[loveKey(a,b)]=obj;
+  const delLove=(a,b)=>delete state.love[loveKey(a,b)];
+
+  const computeContext=()=>{
+    const ctx={revMult:1.0,payrollMult:1.0,resignMult:1.0,rdMult:1.0,crisisMult:1.0,marketLuck:0.0,bondMult:1.0,loveLuck:0.0,loveFragile:0.0};
+    const staffCount=state.people.filter(p=>p.active&&!p.dead).length; // 不含主角
+    const scaleLevel = staffCount>=26?5:staffCount>=13?4:staffCount>=7?3:staffCount>=3?2:1;
+
+    // 规模越大：管理成本越高、离职压力越高（游戏更困难）
+    const mgmtCost = 1 + Math.max(0,staffCount-3)*0.015 + (scaleLevel-1)*0.06;
+    const mgmtResign = 1 + Math.max(0,staffCount-6)*0.010 + (scaleLevel-1)*0.05;
+
+    ctx.payrollMult *= mgmtCost;
+    ctx.resignMult  *= mgmtResign;
+
+    const team=[state.player,...state.people.filter(p=>p.active&&!p.dead)];
+    for(const p of team){ if(p.skill?.apply) p.skill.apply(ctx,p); }
+
+    if(state.company.rescueBuffMonths>0){
+      ctx.revMult *= 1.10;
+      ctx.resignMult *= 0.85;
+    }
+    // 竞争对手临时debuff
+    const rd=state.company.rivalDebuff;
+    if(rd && rd.months>0){
+      ctx.revMult *= (rd.rev||1);
+      ctx.resignMult *= (rd.resign||1);
+    }
+    return ctx;
+  };
+
+  // PCS + contribution
+  const calcPCS=(p)=>{
+    const a=p.abilities;
+    const pcs=0.25*a.prof+0.20*a.act+0.15*a.innov+0.15*a.insight+0.15*a.learn+0.10*a.eq;
+    return Math.round(pcs*100)/100;
+  };
+  const pcsToMult=(pcs)=>Math.round((0.70 + pcs/35)*100)/100;
+  const contributionTable=()=>{
+    const team=[state.player,...state.people.filter(p=>p.active&&!p.dead)];
+    const items=team.map(p=>{const pcs=calcPCS(p);const mult=pcsToMult(pcs);return {id:p.id,name:p.name,pcs,mult,role:p.role,rarity:p.rarity};});
+    const sum=items.reduce((s,x)=>s+x.mult,0)||1;
+    for(const it of items) it.share=it.mult/sum;
+    return items.sort((a,b)=>b.mult-a.mult);
+  };
+
+  const teamBonusMultiplier=()=>{
+    const team=[state.player,...state.people.filter(p=>p.active&&!p.dead)];
+    const avgTotal=team.reduce((s,p)=>s+abilityTotal(p.abilities),0)/(team.length*80);
+    const abilityMult=0.80 + avgTotal*0.75;
+
+    let pairs=0,bondBonus=0;
+    for(const lid of Object.keys(state.relations)) pairs += getSubs(lid).filter(id=>{const q=findPerson(id);return q&&q.active&&!q.dead;}).length;
+    for(const k of Object.keys(state.bonds)) bondBonus += (state.bonds[k]||0)*0.003;
+    const structureMult=1 + Math.min(0.35, pairs*0.015) + Math.min(0.25, bondBonus);
+
+    let loveMult=1.0;
+    for(const k of Object.keys(state.love)){
+      const rel=state.love[k];
+      if(!rel) continue;
+      if(rel.stage==="dating") loveMult*=1.01;
+      if(rel.stage==="conflict") loveMult*=0.99;
+    }
+    loveMult=clamp(loveMult,0.92,1.12);
+
+    return abilityMult*structureMult*loveMult;
+  };
+
+  const revenueBreakdown=()=>{
+    const base=currentIndustry().baseRev;
+    const m=industryMarket(state.company.industry);
+    const ctx=computeContext();
+    const teamMult=teamBonusMultiplier();
+    const marketPart=0.5+0.5*m;
+    const randMult=Math.round((0.96+Math.random()*0.08)*1000)/1000;
+    const revenue=Math.round(base*teamMult*marketPart*ctx.revMult*randMult);
+    return {base,market:m,marketPart,teamMult,skillMult:ctx.revMult,randMult,revenue,industry:currentIndustry().name};
+  };
+
+  const totalPayroll=()=>{
+    const ctx=computeContext();
+    const em=activeEmployees().reduce((s,p)=>s+p.salary,0);
+    const rev=state.company.revenueLast || revenueBreakdown().revenue;
+    const partnerPay=activePartners().reduce((s,p)=>s+Math.round(rev*(p.equity/100)*0.35),0);
+    return {employeePayroll:Math.round(em*ctx.payrollMult), partnerPay, total:Math.round(em*ctx.payrollMult + partnerPay)};
+  };
+
+  const enforceSalaryOrder=()=>{
+    const all=activeEmployees();
+    all.sort((a,b)=>rankOf(a.position)-rankOf(b.position));
+    let maxLower=0;
+    for(const pos of POSITIONS){
+      if(pos.key==="owner") continue;
+      const group=all.filter(x=>x.position===pos.key);
+      if(!group.length) continue;
+      for(const g of group) if(g.salary<=maxLower) g.salary=maxLower+100;
+      maxLower=Math.max(maxLower, ...group.map(g=>g.salary));
+    }
+  };
+
+  const resignProbability=(p)=>{
+    const ctx=computeContext();
+    let prob=0.015 + p.tenureM*0.002;
+    if(p.abilities.eq<4) prob += (4-p.abilities.eq)*0.012;
+
+    let base=calcBaseSalary(p.position,p.abilities);
+    if(p.skill?.key==="high_cost") base*=1.20;
+    if(p.salary<base*0.85) prob+=0.02;
+    prob += Math.min(0.04, state.company.layoffsLast6M*0.006);
+
+    let bondReduce=0;
+    for(const lid of Object.keys(state.relations)){
+      if(getSubs(lid).includes(p.id)) bondReduce += getBond(lid,p.id)*0.006;
+    }
+    prob = clamp(prob-bondReduce,0,0.35);
+    prob *= ctx.resignMult;
+    if(state.company.moraleBuffMonths>0) prob *= 0.85;
+
+    if(p.skill?.key==="mood_swing" && industryMarket(state.company.industry)<0.90) prob = clamp(prob*2+0.12,0,0.35);
+
+    for(const k of Object.keys(state.love)){
+      const rel=state.love[k];
+      if(rel && (rel.a===p.id||rel.b===p.id) && rel.stage==="conflict") prob=clamp(prob+0.03,0,0.35);
+    }
+
+    return clamp(prob,0,0.35);
+  };
+
+  const applyMonthlyResignations=()=>{
+    for(const e of activeEmployees()){
+      const prob=resignProbability(e);
+      if(Math.random()<prob){
+        e.active=false; e.resigned=true;
+        log("warn", story("warn", `离职：${e.name} 递交了辞呈`, [
+          `岗位：${positionName(e.position)} · 任期：${e.tenureM}个月`,
+          "离职风险提示：情商/薪资/任期/裁员/恋爱冲突都会影响稳定性。",
+          "建议：晋升或加薪、给更清晰的成长路径、建立直属关系与羁绊。"
+        ]));
+        removeFromRelations(e.id);
+        for(const k of Object.keys(state.love)){
+          const rel=state.love[k];
+          if(rel && (rel.a===e.id||rel.b===e.id)){ delLove(rel.a,rel.b); log("warn",`【恋爱】由于离职，${rel.aName} 与 ${rel.bName} 的关系结束。`); }
+        }
+      }
+    }
+  };
+
+  const monthlyPlayerOpsEvent=()=>{
+    const isBuff=Math.random()<0.70;
+    const delta=roundHalf(rnd(0.5,1.5));
+    const [k,cn]=pick(ABILS);
+    const before=state.player.abilities[k];
+    state.player.abilities[k]=roundHalf(clamp(before+(isBuff?delta:-delta),1,10));
+    const flavor = isBuff ? pickLine(opBuffFlavors) : pickLine(opDebuffFlavors);
+    const title = isBuff ? "运营成长：你把局面稳住了" : "运营挫折：节奏被打乱";
+    log(isBuff?"good":"bad", story(isBuff?"good":"bad", title, [
+      flavor,
+      `主角能力变化：${cn} ${isBuff?"+":"-"}${delta}（${before}→${state.player.abilities[k]}）`
+    ]));
+  };
+
+  const worldMarketNews=()=>{
+    const ctx=computeContext();
+    for(const ind of INDUSTRIES){
+      const before=industryMarket(ind.key);
+      const drift=rnd(-0.10,0.10) + (Math.random()<0.5? ctx.marketLuck*0.03 : ctx.marketLuck*0.01);
+      state.company.worldMarkets[ind.key]=clamp(roundHalf(before+drift),0.6,1.4);
+    }
+    const cur=state.company.industry;
+    const m=industryMarket(cur);
+    log("warn", story("warn", `世界行情播报：${industryMeta(cur).name} · ${marketLabel(m)}`, [
+      `行业指数：${m.toFixed(2)}。${descMarket(m)}`,
+      `市场传闻：${randomNews()}`
+    ]));
+  };
+
+  const runCrisisIfDue=()=>{
+    const m=state.company.month;
+    if(!state.company.crisesPlan.includes(m)) return;
+    const ctx=computeContext();
+    const t=pick(["股市大跌","国际政治冲击","员工家属生病","员工突发重病","员工离世"]);
+    if(t==="股市大跌"){
+      const drop=roundHalf(rnd(0.1,0.35));
+      for(const ind of INDUSTRIES){
+        const before=industryMarket(ind.key);
+        state.company.worldMarkets[ind.key]=clamp(roundHalf(before-drop*rnd(0.6,1.0)),0.6,1.4);
+      }
+      const loss=Math.round(Math.abs(state.company.assets)*rnd(0.02,0.06)*ctx.crisisMult);
+      state.company.assets-=loss;
+      log("bad", story("bad", "年度变故：股市大跌", [
+      pickLine(crisisFlavors.stock),
+      `资产损失：-${fmtMoney(loss)}（已受危机公关技能影响）`,
+      "建议：缩短回款周期、控制固定成本、保留现金安全垫。"
+    ]));
+    }else if(t==="国际政治冲击"){
+      for(const ind of INDUSTRIES){
+        const before=industryMarket(ind.key);
+        state.company.worldMarkets[ind.key]=clamp(roundHalf(before-rnd(0.05,0.25)),0.6,1.4);
+      }
+      log("warn", story("warn", "年度变故：国际政治冲击", [
+      pickLine(crisisFlavors.geo),
+      "效果：世界行情整体偏弱（短期不确定性上升）。"
+    ]));
+    }else if(t==="员工家属生病"){
+      const pool=[...activeEmployees(),...activePartners()];
+      const emp=pool.length?pick(pool):null;
+      if(!emp){log("warn","【年度变故】家庭事件出现，但公司规模太小，影响有限。");return;}
+      const cost=Math.round(rnd(5000,25000)*(companySize()/5)*ctx.crisisMult);
+      state.company.assets-=cost;
+      const [k,cn]=pick(ABILS);
+      const d=roundHalf(rnd(0.5,1.5));
+      emp.abilities[k]=roundHalf(clamp(emp.abilities[k]-d,1,10));
+      log("bad", story("bad", "年度变故：家庭突发事件", [
+      `${emp.name} 家属生病：${pickLine(crisisFlavors.family)}`,
+      `额外支出：${fmtMoney(cost)}`,
+      `能力波动：${cn}-${d}`
+    ]));
+    }else if(t==="员工突发重病"){
+      const emp=activeEmployees().length?pick(activeEmployees()):null;
+      if(!emp){log("warn","【年度变故】疾病事件出现，但当前无员工，影响有限。");return;}
+      const cost=Math.round(rnd(8000,40000)*ctx.crisisMult);
+      state.company.assets-=cost;
+      const [k,cn]=pick(ABILS);
+      const d=roundHalf(rnd(1.0,2.0));
+      emp.abilities[k]=roundHalf(clamp(emp.abilities[k]-d,1,10));
+      if(Math.random()<0.35){ emp.active=false; emp.resigned=true; removeFromRelations(emp.id); log("bad", story("bad", "年度变故：员工突发重病（离职休养）", [
+      `${emp.name} 突发重病：${pickLine(crisisFlavors.sick)}`,
+      `支出：${fmtMoney(cost)}；能力：${cn}-${d}`,
+      "结果：离职休养（未来抽卡可能回归，保留离职前数据）。"
+    ])); }
+      else log("bad", story("bad", "年度变故：员工突发重病", [
+      `${emp.name} 突发重病：${pickLine(crisisFlavors.sick)}`,
+      `支出：${fmtMoney(cost)}；能力：${cn}-${d}`
+    ]));
+    }else{
+      const pool=[...activeEmployees(),...activePartners()];
+      const emp=pool.length?pick(pool):null;
+      if(!emp){log("warn","【年度变故】离世事件出现，但公司规模太小，影响有限。");return;}
+      emp.dead=true; emp.active=false; emp.resigned=false; removeFromRelations(emp.id);
+      log("bad", story("bad", "年度变故：不幸离世", [
+      `${emp.name} 离世：${pickLine(crisisFlavors.death)}`,
+      "结果：永久消失（无法再抽到）。"
+    ]));
+      for(const k of Object.keys(state.love)){
+        const rel=state.love[k];
+        if(rel && (rel.a===emp.id||rel.b===emp.id)){ delLove(rel.a,rel.b); log("bad",`【恋爱】因离世，${rel.aName} 与 ${rel.bName} 的关系永久结束。`); }
+      }
+    }
+  };
+
+  const teamActivityCost=()=>Math.round(4000 + companySize()*1600);
+  const doTeamActivity=()=>{
+    if(state.company.teamActivityUsedMonth===state.company.month){log("warn","本月团建已使用（每月最多一次）。");return;}
+    const cost=teamActivityCost();
+    state.company.assets-=cost;
+    const all=[state.player,...state.people.filter(p=>p.active&&!p.dead)];
+    for(const p of all){const [k,cn]=pick(ABILS);const d=roundHalf(rnd(0.5,1.5));p.abilities[k]=roundHalf(clamp(p.abilities[k]+d,1,10));}
+    state.company.teamActivityUsedMonth=state.company.month;
+    log("good", story("good", "团建：团队气氛回暖", [
+      `投入：${fmtMoney(cost)}（随人数增长）`,
+      "效果：全员随机能力 +0.5~1.5（当月最多一次）",
+      "小贴士：团建对稳定团队有效，但别在现金极度紧张时硬上。"
+    ]));
+    save(); render();
+  };
+  const doAnnualMeeting=(choice)=>{
+    if(state.company.annualMeetingUsedYear===state.company.year){log("warn","本年度年会已使用。");return;}
+    if(choice==="cash"){const gain=Math.round(Math.abs(state.company.assets)*0.10);state.company.assets+=gain;log("good", story("good", "年会：选择现金红利", [
+        `公司收到一笔“年终奖金池”：+${fmtMoney(gain)}（当前资产的10%）`,
+        "适用：现金压力大、准备转行或对冲风险时。"
+      ]));}
+    else{const all=[state.player,...state.people.filter(p=>p.active&&!p.dead)];for(const p of all){const [k,cn]=pick(ABILS);p.abilities[k]=roundHalf(clamp(p.abilities[k]+0.5,1,10));}log("good", story("good", "年会：选择能力成长", [
+        "全员随机能力 +0.5（免费，每年一次）",
+        "适用：想拉开长期差距、培养骨干、提升组织上限时。"
+      ]));}
+    state.company.annualMeetingUsedYear=state.company.year;
+    save(); render();
+  };
+
+  // Gacha + name
+  const N1=["林","苏","赵","周","吴","郑","王","李","陈","张","刘","黄","何","宋","唐","许","高","孔","袁","冯","彭","魏","谢","邓","姜"];
+  const N2=["晨","雨","然","泽","宇","宁","嘉","欣","涵","昊","若","瑶","博","琳","骁","妍","清","哲","熙","瑾","彤","铭","航","逸","琪","霖"];
+  const genName=()=>pick(N1)+pick(N2);
+
+  const pullOne=(paid=true)=>{
+    const cost=paid?5000:0;
+    state.company.assets-=cost;
+    state.gacha.pulls++;
+    state.gacha.pitySSR++;
+    let rar=pickRarity();
+    if(state.gacha.pitySSR>=20 && Math.random()<0.35) rar="SSR";
+    if(state.gacha.pitySSR>=40) rar="SSR";
+    if(rar==="SSR") state.gacha.pitySSR=0;
+
+    const upRole=state.company.upRole || "销售";
+    const isUp = (Math.random()<0.35);
+    const role = isUp ? upRole : pick(ROLES);
+
+    const p=mkPerson({rarity:rar, role, name:genName(), useAiPortrait:true});
+    state.people.push(p);
+    log(rar==="SSR"?"good":rar==="SR"?"warn":"warn",`【抽卡】获得 ${rar} · ${p.role} · ${p.name}（${p.skill.type==="neg"?"负面":"正面"}：${p.skill.name}）。`);
+    save(); render();
+    return p;
+  };
+
+  // Position rules
+  const canHoldPosition=(person,posKey)=>{
+    const p=posByKey(posKey);
+    if(posKey==="owner") return {ok:false,why:"只有主角可以是公司所有人。"};
+    if(person.abilities.manage < p.minManage) return {ok:false,why:`管理能力不足（需≥${p.minManage}）`};
+    if(companySize() < p.minSize) return {ok:false,why:`公司规模不足（需≥${p.minSize}人）`};
+    return {ok:true};
+  };
+
+  const promote=(pid,newPos)=>{
+    const p=findPerson(pid); if(!p||!p.active||p.dead) return;
+    const r=canHoldPosition(p,newPos);
+    if(!r.ok){log("bad",`无法任命：${p.name}→${positionName(newPos)}：${r.why}。`);return;}
+    p.position=newPos;
+    const base=calcBaseSalary(newPos,p.abilities);
+    p.salary=Math.round(Math.max(p.salary, base*1.02));
+    enforceSalaryOrder();
+    log("good",`【任命】${p.name} 晋升为 ${positionName(newPos)}，新月薪约 ${fmtMoney(p.salary)}。`);
+    save(); render();
+  };
+  const raise=(pid,amount)=>{
+    const p=findPerson(pid); if(!p||!p.active||p.dead) return;
+    amount=Math.max(100,Math.round(amount||0));
+    p.salary+=amount;
+    enforceSalaryOrder();
+    log("good",`【加薪】${p.name} 月薪 +${fmtMoney(amount)} → ${fmtMoney(p.salary)}。`);
+    save(); render();
+  };
+  const fire=(pid)=>{
+    const p=findPerson(pid); if(!p||!p.active||p.dead) return;
+    p.active=false; p.resigned=true;
+    state.company.layoffsThisYear++; state.company.layoffsLast6M++;
+    removeFromRelations(pid);
+    log("warn",`【裁员】你解雇了 ${p.name}。裁员过频可能触发负面事件。`);
+    if(state.company.layoffsLast6M>=3 && Math.random()<0.35){
+      const loss=Math.round(rnd(8000,35000)*state.company.layoffsLast6M/2);
+      state.company.assets-=loss;
+      for(const ind of INDUSTRIES){
+        const before=industryMarket(ind.key);
+        state.company.worldMarkets[ind.key]=clamp(roundHalf(before-rnd(0.02,0.10)),0.6,1.4);
+      }
+      log("bad", story("bad", "负面舆论：频繁裁员发酵", [
+        pickLine(layoffFlavors),
+        `资产损失：-${fmtMoney(loss)}；外部观望情绪上升。`,
+        "提示：用更清晰的战略解释、合理补偿、与关键人才沟通，可降低后续冲击。"
+      ]));
+    }
+    for(const k of Object.keys(state.love)){
+      const rel=state.love[k];
+      if(rel && (rel.a===p.id||rel.b===p.id)){ delLove(rel.a,rel.b); log("warn",`【恋爱】裁员导致 ${rel.aName} 与 ${rel.bName} 的关系结束。`); }
+    }
+    save(); render();
+  };
+
+  // Org assignment
+  const assignSub=(leaderId, subId)=>{
+    if(leaderId===subId) return;
+    const isCycle=(a,b)=>{
+      const dfs=(x)=>{
+        const subs=getSubs(x);
+        if(subs.includes(a)) return true;
+        for(const s of subs) if(dfs(s)) return true;
+        return false;
+      };
+      return dfs(b);
+    };
+    if(isCycle(leaderId, subId)){log("bad","无法设置：会形成循环汇报关系。");return;}
+    for(const lid of Object.keys(state.relations)){
+      state.relations[lid]=state.relations[lid].filter(x=>x!==subId);
+      if(state.relations[lid].length===0) delete state.relations[lid];
+    }
+    const arr=getSubs(leaderId);
+    if(!arr.includes(subId)) arr.push(subId);
+    setSubs(leaderId, arr);
+    if(getBond(leaderId,subId)===0) setBond(leaderId,subId,0.5);
+    const leaderName=leaderId==="player"?state.player.name:(findPerson(leaderId)?.name||leaderId);
+    log("good",`【组织】已设置：${leaderName} → ${findPerson(subId)?.name}（直属）。`);
+    save(); render();
+  };
+  const unassignSub=(leaderId, subId)=>{
+    const arr=getSubs(leaderId).filter(x=>x!==subId);
+    if(arr.length) setSubs(leaderId,arr); else delete state.relations[leaderId];
+    log("warn","【组织】已取消直属关系。");
+    save(); render();
+  };
+
+  // Portrait upload
+  const compressImageToDataURL=(file,maxSize=256,quality=0.82)=>new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement("canvas");
+        const scale=Math.min(maxSize/img.width,maxSize/img.height,1);
+        const w=Math.round(img.width*scale), h=Math.round(img.height*scale);
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext("2d");
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL("image/jpeg",quality));
+      };
+      img.onerror=reject; img.src=reader.result;
+    };
+    reader.onerror=reject; reader.readAsDataURL(file);
+  });
+  const attachPortrait=async(personId,file)=>{
+    const p=(personId==="player")?state.player:findPerson(personId);
+    if(!p) return;
+    try{
+      p.portrait=await compressImageToDataURL(file,256,0.82);
+      log("good",`【肖像】已更新 ${p.name} 的照片肖像。`);
+      save(); render();
+    }catch(e){
+      log("bad","【肖像】图片处理失败（请换一张或更小的图片）。");
+      save(); render();
+    }
+  };
+
+  // 转行系统
+  const gameOver=(reason)=>{
+    state.company.gameOver=true;
+    state.company.gameOverReason=reason;
+    log("bad",`【游戏失败】${reason}`);
+  };
+
+  const switchIndustry=(toKey)=>{
+    const fromKey=state.company.industry;
+    if(toKey===fromKey) return;
+    const inDebt = state.company.assets < 0;
+    const baseLoss = 60000 + companySize()*9000;
+    const extraLoss = Math.max(0, Math.round(Math.abs(state.company.assets)*0.08));
+    let loss = Math.round(baseLoss + extraLoss);
+    const lucky = Math.random() < 0.08;
+    if(lucky){
+      const offset=Math.round(loss*rnd(0.35,0.85));
+      loss=Math.max(0,loss-offset);
+      log("good", story("good", "转行奇遇：关键资源从天而降", [
+      "你遇到了一次意外的贵人/渠道/订单支持。",
+      `转行损失减少：${fmtMoney(offset)}（大幅缓冲冲击）`
+    ]));
+    }
+    state.company.assets -= loss;
+    state.company.industry = toKey;
+
+    if(inDebt){
+      state.company.rescueBuffMonths = 24;
+      state.company.negativeSwitchCount += 1;
+      log("warn", story("warn", "负资产转行：背水一战的救助期", [
+      `触发 2 年救助Buff：营收+10%、离职-15%（剩余 ${state.company.rescueBuffMonths} 个月）`,
+      `负资产转行次数：${state.company.negativeSwitchCount}/2（超过2次直接失败）`,
+      "叙事：你用最后的筹码换来了喘息空间——但必须在救助期内重建现金流。"
+    ]));
+      if(state.company.negativeSwitchCount>2){
+        gameOver(`负资产情况下转行超过两次（${state.company.negativeSwitchCount} 次）。`);
+      }
+    }
+
+    log("warn", story("warn", "战略转向：公司更换赛道", [
+      `从：${industryMeta(fromKey).name} → 到：${industryMeta(toKey).name}`,
+      `一次性转行损失：-${fmtMoney(loss)}（包含机会成本与重建成本）`,
+      "提示：转行后建议尽快调整组织架构与岗位配置，避免“旧打法”拖累新赛道。"
+    ]));
+    save(); render();
+  };
+
+  // 恋爱系统
+  const loveMonthly=()=>{
+    const ctx=computeContext();
+    const emps=[...activeEmployees(), ...activePartners()];
+    if(emps.length<2) return;
+
+    for(const key of Object.keys(state.love)){
+      const rel=state.love[key];
+      if(!rel) continue;
+      const a=findPerson(rel.a), b=findPerson(rel.b);
+      if(!a||!b||a.dead||b.dead||!a.active||!b.active){ delLove(rel.a,rel.b); continue; }
+      rel.months += 1;
+
+      const avgEQ=(a.abilities.eq+b.abilities.eq)/2;
+      const basePos=0.55 + (avgEQ-5)*0.05 + ctx.loveLuck;
+      const posProb=clamp(basePos,0.15,0.85);
+
+      let conflictBias=0;
+      if(a.skill?.key==="conflict"||b.skill?.key==="conflict") conflictBias += 0.12;
+      if(a.skill?.key==="fragile_heart"||b.skill?.key==="fragile_heart") conflictBias += 0.08;
+
+      const eventChance=0.18;
+      if(Math.random()<eventChance){
+        const isPos = Math.random() < clamp(posProb - conflictBias, 0.05, 0.90);
+        if(isPos){
+          const [k1,cn1]=pick(ABILS), [k2,cn2]=pick(ABILS);
+          a.abilities[k1]=roundHalf(clamp(a.abilities[k1]+0.5,1,10));
+          b.abilities[k2]=roundHalf(clamp(b.abilities[k2]+0.5,1,10));
+          rel.stage="dating";
+          log("good", story("good", "恋爱好事：关系升温", [
+          pickLine(loveGoodFlavors),
+          `${a.name} 获得：${cn1}+0.5；${b.name} 获得：${cn2}+0.5`
+        ]));
+        }else{
+          rel.stage = (Math.random()<0.55) ? "conflict" : "breakup";
+          const drop=roundHalf(rnd(0.5,1.5));
+          const [k,cn]=pick(ABILS);
+          const extra = (a.skill?.key==="fragile_heart"||b.skill?.key==="fragile_heart"||Math.random()<ctx.loveFragile) ? 0.5 : 0;
+          const totalDrop=roundHalf(drop+extra);
+          (Math.random()<0.5?a:b).abilities[k]=roundHalf(clamp((Math.random()<0.5?a:b).abilities[k]-totalDrop,1,10));
+          if(rel.stage==="breakup"){
+            log("bad", story("bad", "恋爱分手：关系破裂", [
+            pickLine(loveBadFlavors),
+            `情绪影响：${cn}-${totalDrop}（其中包含脆弱加成可能更重）`,
+            "提示：关键岗位发生分手后，离职风险会升高。"
+          ]));
+            delLove(rel.a,rel.b);
+          }else{
+            log("warn", story("warn", "恋爱冲突：冷战与误会", [
+            pickLine(loveBadFlavors),
+            `能力波动：${cn}-${totalDrop}（关系进入冲突期）`,
+            "提示：冲突期越久，后续离职/分手概率越高。"
+          ]));
+          }
+        }
+      }
+
+      if(rel.stage==="conflict" && rel.months>=6 && Math.random()<0.12){
+        const who=Math.random()<0.5?a:b;
+        if(who.kind==="employee"){
+          who.active=false; who.resigned=true; removeFromRelations(who.id);
+          log("bad", story("bad", "恋爱后果：长期冲突引发离职", [
+          `${who.name} 在压力下选择离职（公司失去一名成员）。`,
+          "建议：建立更清晰的工作边界与沟通机制，降低“关系外溢”风险。"
+        ]));
+          delLove(rel.a,rel.b);
+        }
+      }
+    }
+
+    const single=emps.filter(p=>{
+      for(const k of Object.keys(state.love)){ const rel=state.love[k]; if(rel && (rel.a===p.id||rel.b===p.id)) return false; }
+      return true;
+    });
+    if(single.length<2) return;
+
+    const baseChance = clamp(0.02 + single.length*0.002, 0.02, 0.10);
+    if(Math.random()<baseChance){
+      const a=pick(single);
+      const candidates=single.filter(x=>x.id!==a.id && Math.abs(x.age-a.age)<=5);
+      const b=candidates.length?pick(candidates):pick(single.filter(x=>x.id!==a.id));
+      const avgEQ=(a.abilities.eq+b.abilities.eq)/2;
+      let okProb=clamp(0.35 + (avgEQ-5)*0.08 + computeContext().loveLuck, 0.10, 0.80);
+      if(a.skill?.key==="conflict"||b.skill?.key==="conflict") okProb=clamp(okProb-0.15,0.05,0.80);
+      if(Math.random()<okProb){
+        setLove(a.id,b.id,{a:a.id,b:b.id,aName:a.name,bName:b.name,stage:"dating",months:0});
+        log("warn", story("warn", "办公室恋情：一段关系开始了", [
+        `${a.name} 与 ${b.name} 因频繁协作产生好感（年龄相近）。`,
+        "影响：恋爱中整体对营收有轻微加成，但也可能引发后续事件。"
+      ]));
+      }else{
+        if(Math.random()<0.45){
+          const [k,cn]=pick(ABILS);
+          a.abilities[k]=roundHalf(clamp(a.abilities[k]-0.5,1,10));
+          log("warn", story("warn", "办公室八卦：暧昧传闻扩散", [
+          "流言让团队沟通变得更谨慎。",
+          `${a.name} 情绪受影响：${cn}-0.5`
+        ]));
+        }
+      }
+    }
+  };
+
+  const updateNegativeStreak=()=>{
+    if(state.company.assets<0) state.company.negativeStreak += 1;
+    else state.company.negativeStreak = 0;
+    if(state.company.negativeStreak>=3){
+      gameOver(`总资产连续 ${state.company.negativeStreak} 个月为负（第${state.company.year}年${state.company.month}月）。`);
+    }
+  };
+
+  const advanceMonth=()=>{
+    unlockRivalIfNeeded();
+    if(state.company.gameOver) return;
+
+    const bd=revenueBreakdown();
+    state.company.revenueLast=bd.revenue;
+    state.company.assets += bd.revenue;
+
+    const pay=totalPayroll();
+    state.company.assets -= pay.total;
+
+    for(const p of state.people) if(p.active && !p.dead) p.tenureM++;
+
+    if(state.company.rescueBuffMonths>0) state.company.rescueBuffMonths--;
+    if(state.company.moraleBuffMonths>0) state.company.moraleBuffMonths--;
+
+    monthlyPlayerOpsEvent();
+    worldMarketNews();
+    // V2.7 决策事件：每月有一定概率触发（含行业专属事件）
+    if(!state.ui.pendingDecision && Math.random()<0.65){
+      const ev=pickDecisionEvent();
+      if(ev){ openDecision(ev); state.ui.decisionOverlayOpen=false; }
+    }
+    runCrisisIfDue();
+    loveMonthly();
+    applyMonthlyResignations();
+
+    if(state.company.layoffsLast6M===0 && industryMarket(state.company.industry)>=0.85){
+      for(const lid of Object.keys(state.relations)){
+        const leader=(lid==="player")?state.player:findPerson(lid);
+        if(!leader||!leader.active||leader.dead) continue;
+        for(const sid of getSubs(lid)){
+          const sub=findPerson(sid);
+          if(!sub||!sub.active||sub.dead) continue;
+          if(Math.random()<0.55){
+            const b=getBond(lid,sid);
+            const add=Math.random()<0.6?0.5:1.0;
+            const nb=roundHalf(clamp(b+add*computeContext().bondMult,0,10));
+            setBond(lid,sid,nb);
+            log("good",`【羁绊】${leader.name} ↔ ${sub.name} 羁绊 +${add}（Lv ${b}→${nb}）`);
+          }
+        }
+      }
+    }
+
+    state.company.layoffsLast6M = Math.max(0, state.company.layoffsLast6M - 0.5);
+
+    updateNegativeStreak();
+
+    state.company.month++;
+    if(state.company.month>12){
+      state.company.month=1; state.company.year++;
+      state.company.layoffsThisYear=0;
+      scheduleYearCrises();
+      log("warn",`【新年度】进入第 ${state.company.year} 年：已重置年度变故计划（2次/年）。`);
+    }
+
+    save(); if(state.company.rivalDebuff && state.company.rivalDebuff.months>0){state.company.rivalDebuff.months--; if(state.company.rivalDebuff.months<=0) state.company.rivalDebuff=null;}
+    rivalAttack();
+    render();
+  };
+
+  // 兼容：旧按钮/旧链接调用
+  const nextMonth=()=>advanceMonth();
+
+
+  // Modal detail
+  let modalEl=null;
+  const closeModal=()=>{if(modalEl){modalEl.remove();modalEl=null;}}
+  const openPersonDetail=(pid)=>{
+    const p=(pid==="player")?state.player:findPerson(pid);
+    if(!p) return;
+    const bd=revenueBreakdown();
+    const table=contributionTable();
+    const me=table.find(x=>x.id===pid);
+    const estMoney=Math.round((bd.revenue||0)*(me?.share||0));
+
+    const base= (p.kind==="employee") ? calcBaseSalary(p.position,p.abilities) : 0;
+    const salaryHint=p.kind==="partner"
+      ? "合伙人薪酬按营收自动变化（此处展示股权与估算）。"
+      : (p.id==="player" ? "主角是公司所有人：永不离职，薪资为 0（收益体现在公司资产）。" : `同能力同职位“合理薪资”约 ${fmtMoney(Math.round(base))}/月（当前 ${fmtMoney(p.salary)}/月）。`);
+    const risk=(p.kind==="employee" && p.active && !p.dead) ? Math.round(resignProbability(p)*100) : 0;
+
+    const relList=[];
+    for(const k of Object.keys(state.love)){
+      const rel=state.love[k];
+      if(rel && (rel.a===pid||rel.b===pid)){
+        const other = rel.a===pid ? rel.bName : rel.aName;
+        relList.push(`${other}（${loveStageText(rel.stage)}·${rel.months}月）`);
+      }
+    }
+
+    const skillTag=p.skill?.type==="neg"?el("span",{class:"tag bad"},["负面特性"]):el("span",{class:"tag good"},["正面特性"]);
+
+    const info=el("div",{class:"card"},[
+      el("h3",{},[
+        el("span",{},[`成员详情 · ${p.name}`]),
+        el("span",{class:"btnrow"},[
+          el("button",{class:"btn small secondary", onclick:(e)=>{e.stopPropagation(); closeModal();}},["关闭"])
+        ])
+      ]),
+      el("div",{class:"hint"},[
+        `性别：${p.gender} · 年龄：${p.age}
+`+
+        `身份：${p.kind==="partner"?"合伙人":(p.id==="player"?"主角":"员工")} · 岗位：${p.role} · 职位：${positionName(p.position)}
+`+
+        (p.kind==="partner"?`股权：${p.equity}%
+`:(p.id==="player"?"":`月薪：${fmtMoney(p.salary)}
+`))+
+        `任期：${p.tenureM} 个月
+`+
+        ((p.kind==="employee" && p.active && !p.dead)?`离职风险（估算）：${risk}%
+`:"")+
+        (relList.length?`恋爱关系：${relList.join("；")}
+`:"")+
+        `
+技能：${p.skill?.name||"无"}
+${p.skill?.desc||""}
+
+${salaryHint}
+
+`+
+        `个人贡献 PCS：${me?.pcs ?? calcPCS(p)}
+`+
+        `贡献系数：x${me?.mult ?? pcsToMult(calcPCS(p))}
+`+
+        `预估本月贡献：${fmtMoney(estMoney)}（按贡献权重估算）`
+      ]),
+      el("div",{class:"ptags"},[skillTag, el("span",{class:"tag"},[p.skill?.name||"无"])]),
+    ]);
+
+    const bars=el("div",{class:"bars"}, ABILS.map(([k,cn])=>el("div",{class:"bar"},[
+      el("div",{},[`${cn} ${p.abilities[k].toFixed(1)}`]),
+      meter(p.abilities[k])
+    ])));
+
+    const actions=el("div",{class:"card"},[
+      el("h3",{},["操作（头像/任命/加薪/裁员）"]),
+      renderPortraitActions(pid),
+      (pid!=="player" && p.kind==="employee" && p.active && !p.dead)? renderManageActions(p) : el("div",{class:"hint"},["（主角不可离职/不可裁员；合伙人/离职/死亡角色不可进行此处管理操作）"])
+    ]);
+
+    const wrap=el("div",{style:"position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:12px;", onclick:closeModal},[
+      el("div",{style:"width:min(820px,100%);max-height:86vh;overflow:auto;border-radius:18px;", onclick:(e)=>e.stopPropagation()},[
+        info,
+        el("div",{class:"card"},[el("h3",{},["能力面板"]),bars]),
+        actions
+      ])
+    ]);
+    closeModal(); modalEl=wrap; document.body.appendChild(modalEl);
+  };
+
+  const openAvatarGallery=(p)=>{
+    const modal = el("div",{class:"modal"},[
+      el("div",{class:"card"},[
+        el("div",{class:"h"},["头像图库"]),
+        el("div",{class:"mini"},["点击头像即可应用到该角色（不上传也能用）。"]),
+        el("div",{class:"gallery"},[
+          ...AVATAR_LIBRARY.map(entry=>{
+            const node = entry.type==="svg" ? (()=>{const d=document.createElement("div"); d.innerHTML=entry.data; d.firstElementChild.classList.add("svg"); return d.firstElementChild;})()
+                       : entry.type==="text" ? el("div",{style:"font-size:44px"},[entry.data])
+                       : el("div",{},["🙂"]);
+            return el("div",{class:"avItem",onclick:()=>{
+              p.avatar = {type: entry.type, data: entry.data};
+              closeModal();
+              render();
+            }},[node]);
+          })
+        ]),
+        el("div",{class:"row",style:"margin-top:12px;justify-content:flex-end"},[
+          el("button",{class:"btn",onclick:closeModal},["关闭"])
+        ])
+      ])
+    ]);
+    openModal(modal);
+  };
+
+  const renderPortraitActions=(pid)=>{
+    const p=(pid==="player")?state.player:findPerson(pid);
+    const row=el("div",{class:"btnrow"},[]);
+    const input=el("input",{type:"file",accept:"image/*",style:"display:none"});
+    input.addEventListener("change",async()=>{
+      const file=input.files && input.files[0];
+      if(file) await attachPortrait(pid,file);
+    });
+    row.appendChild(el("button",{class:"btn small secondary", onclick:()=>input.click()},["上传照片肖像"]));
+    row.appendChild(input);
+    row.appendChild(el("button",{class:"btn small secondary", onclick:()=>{
+      p.portrait=randomPortrait();
+      log("good",`【肖像】已为 ${p.name} 生成默认AI风头像。`);
+      save(); render();
+    }},["随机AI头像"]));
+    if(p?.portrait){
+      row.appendChild(el("button",{class:"btn small danger", onclick:()=>{
+        p.portrait=null; log("warn",`【肖像】已移除 ${p.name} 的肖像。`); save(); render();
+      }},["移除肖像"]));
+    }
+    return row;
+  };
+
+  const renderManageActions=(p)=>{
+    const grid=el("div",{class:"formgrid"},[
+      el("div",{},[
+        el("label",{},["任命/晋升"]),
+        (()=>{const sel=el("select",{});for(const pos of POSITIONS){ if(pos.key==="owner") continue; sel.appendChild(el("option",{value:pos.key},[`${pos.name}（规模≥${pos.minSize} 管理≥${pos.minManage}）`]))}sel.value=p.position;
+          const btn=el("button",{class:"btn small good", onclick:()=>{promote(p.id, sel.value); openPersonDetail(p.id);}},["确定任命"]);
+          return el("div",{},[sel, el("div",{style:"height:8px"}), btn]);
+        })()
+      ]),
+      el("div",{},[
+        el("label",{},["加薪"]),
+        (()=>{const inp=el("input",{type:"number",value:"300",min:"100",step:"100"});
+          const btn=el("button",{class:"btn small good", onclick:()=>{raise(p.id, Number(inp.value)); openPersonDetail(p.id);}},["加薪"]);
+          return el("div",{},[inp, el("div",{style:"height:8px"}), btn]);
+        })()
+      ])
+    ]);
+    const fireBtn=el("button",{class:"btn small danger", onclick:()=>{fire(p.id); closeModal();}},["裁员/解雇"]);
+    return el("div",{},[grid, el("div",{style:"height:10px"}), fireBtn]);
+  };
+
+  const TABS=[
+    {key:"dashboard",name:"运营面板"},
+    {key:"gacha",name:"抽卡招人"},
+    {key:"team",name:"成员管理"},
+    {key:"org",name:"组织结构"},
+    {key:"world",name:"世界行情/转行"},
+    {key:"rival",name:"竞争对手"},
+    {key:"settings",name:"设置/新档"},
+  ];
+
+  const topStats=()=>{
+    const bd=revenueBreakdown();
+    const pay=totalPayroll();
+    const n=staffCount();
+    const lvl=scaleLevel();
+    const score=computeScore();
+    return [
+      `第${state.company.year}年${state.company.month}月`,
+      `人员 ${n} 人（${scaleName(lvl)}规模）`,
+      `评分 ${score}`,
+      `资产 ${fmtMoney(state.company.assets)}`,
+      `负资产连续 ${state.company.negativeStreak} 月`,
+      `本月营收 ${fmtMoney(bd.revenue)}（${bd.industry}）`,
+      `工资 ${fmtMoney(pay.total)}`,
+      upcomingFlowMini(),
+      `当前行业行情 ${industryMarket(state.company.industry).toFixed(2)}(${marketLabel(industryMarket(state.company.industry))})`
+    ];
+  };
+
+  const personCard=(p)=>{
+    const tags=[];
+    tags.push(el("span",{class:"tag"},[p.role]));
+    if(p.id!=="player") tags.push(el("span",{class:`tag ${rarityMeta(p.rarity).cls}`},[p.rarity]));
+    if(p.id==="player") tags.push(el("span",{class:"tag player"},["主角"]));
+    if(p.id==="player") tags.push(el("span",{class:"tag good"},["所有人"]));
+    if(p.kind==="partner") tags.push(el("span",{class:"tag warn"},[`合伙人 ${p.equity}%`]));
+    if(!p.active && p.resigned) tags.push(el("span",{class:"tag warn"},["离职"]));
+    if(p.dead) tags.push(el("span",{class:"tag bad"},["死亡"]));
+    const skillTag = p.skill?.type==="neg" ? el("span",{class:"tag bad"},["负面"]) : el("span",{class:"tag good"},["正面"]);
+    tags.push(skillTag);
+    tags.push(el("span",{class:"tag"},[p.skill?.name||"无"]));
+
+    let loveTag=null;
+    for(const k of Object.keys(state.love)){
+      const rel=state.love[k];
+      if(rel && (rel.a===p.id||rel.b===p.id)){ loveTag=el("span",{class:"tag warn"},[loveStageText(rel.stage)]); break; }
+    }
+    if(loveTag) tags.push(loveTag);
+
+    return el("div",{class:"person", onclick:()=>openPersonDetail(p.id)},[
+      el("div",{class:"avatarFrame"},[
+        el("div",{class:"spark"}),
+        el("div",{class:"avatar"},[
+          p.portrait?el("img",{src:p.portrait}):el("div",{},["🙂"])
+        ])
+      ]),
+      el("div",{},[
+        el("div",{class:"phead"},[
+          el("div",{class:"pname"},[p.name+" · "+positionName(p.position)]),
+          el("div",{class:"ptags"},tags)
+        ]),
+        el("div",{class:"hint"},[
+          `${p.gender} · ${p.age}岁  |  PCS ${calcPCS(p)}  |  贡献系数 x${pcsToMult(calcPCS(p))}
+`+
+          (p.id==="player" ? "主角：公司所有人（不会离职）" :
+            (p.kind==="employee"?`薪资：${fmtMoney(p.salary)}/月  | 离职风险：${Math.round(resignProbability(p)*100)}%`:"合伙人薪酬随营收自动变化"))
+        ]),
+      ])
+    ]);
+  };
+
+  const viewDashboard=()=>{
+    const bd=revenueBreakdown();
+    const pay=totalPayroll();
+    const top=contributionTable().slice(0,5);
+    const rescue = state.company.rescueBuffMonths>0
+      ? `救助Buff剩余：${state.company.rescueBuffMonths}个月（营收+10% 离职-15%）`
+      : "救助Buff：无";
+
+    const revenueCard=el("div",{class:"card"},[
+      el("h3",{},["营收明细（透明拆分）"]),
+      el("div",{class:"kpi"},[
+        el("div",{class:"k"},[el("div",{class:"t"},["当前行业"]), el("div",{class:"v"},[bd.industry])]),
+        el("div",{class:"k"},[el("div",{class:"t"},["行业基础营收"]), el("div",{class:"v"},[fmtMoney(bd.base)])]),
+        el("div",{class:"k"},[el("div",{class:"t"},["本月营收"]), el("div",{class:"v"},[fmtMoney(bd.revenue)])]),
+        el("div",{class:"k"},[el("div",{class:"t"},["行业行情"]), el("div",{class:"v"},[bd.market.toFixed(2)+"（"+marketLabel(bd.market)+"）"])]),
+        el("div",{class:"k"},[el("div",{class:"t"},["市场参与（50%）"]), el("div",{class:"v"},["x"+bd.marketPart.toFixed(2)])]),
+        el("div",{class:"k"},[el("div",{class:"t"},["团队/组织/恋爱乘数"]), el("div",{class:"v"},["x"+bd.teamMult.toFixed(3)])]),
+        el("div",{class:"k"},[el("div",{class:"t"},["技能/救助修正"]), el("div",{class:"v"},["x"+bd.skillMult.toFixed(3)])]),
+        el("div",{class:"k"},[el("div",{class:"t"},["工资总支出"]), el("div",{class:"v"},[fmtMoney(pay.total)])]),
+      ]),
+      el("div",{class:"hr"}),
+      el("div",{class:"hint"},[`负资产连续：${state.company.negativeStreak} 月（≥3 失败）
+${rescue}`]),
+      el("div",{class:"hr"}),
+      el("div",{class:"hint"},["Top贡献成员（估算）"]),
+      el("div",{class:"list"}, top.map(it=>{
+        const money=Math.round((bd.revenue||0)*it.share);
+        return el("div",{class:"logitem"},[
+          `${it.name}（${it.rarity}·${it.role}） 贡献系数 x${it.mult}  · 预估贡献 ${fmtMoney(money)}`
+        ]);
+      }))
+    ]);
+
+    const actions=el("div",{class:"card"},[
+      el("h3",{},["本月操作"]),
+      el("div",{class:"btnrow"},[
+        el("button",{class:"btn good", onclick:advanceMonth},["推进一个月"]),
+        el("button",{class:"btn secondary", onclick:doTeamActivity},[`团建（${fmtMoney(teamActivityCost())}）`]),
+        el("button",{class:"btn warn", onclick:()=>doAnnualMeeting("cash")},["年会：+10%资金（年1次）"]),
+        el("button",{class:"btn warn", onclick:()=>doAnnualMeeting("buff")},["年会：全员+0.5（年1次）"]),
+      ]),
+      el("div",{class:"hr"}),
+      el("div",{class:"hint"},[
+        `提示：
+1）点成员卡片可查看『成员详情页』：贡献/技能/离职风险/上传照片肖像/随机AI头像。
+2）『世界行情/转行』里可随时转行：损失很大，但有小概率幸运事件；负资产转行可触发2年救助Buff。
+3）恋爱系统：员工年龄相近可能恋爱；会触发好/坏事件并影响公司表现。`
+      ])
+    ]);
+
+    const logBox=el("div",{class:"card"},[
+      el("h3",{},["日志"]),
+      el("div",{class:"log"}, state.log.map(x=>el("div",{class:`logitem ${x.type}`},[
+        el("div",{class:"hint"},[x.t]),
+        x.text
+      ])))
+    ]);
+
+    return el("div",{class:"grid"},[
+      (SafeStore.ok?null:el("div",{class:"card",style:"border-color:rgba(255,209,102,.35);background:rgba(255,209,102,.08)"},[
+        el("div",{class:"h"},["提示：当前浏览器禁用了本地存档"]),
+        el("div",{class:"mini"},["你仍然可以游玩，但“自动保存/读取”可能不可用。建议用 Safari 或把文件放到支持本地存储的浏览器中打开。"])
+      ])),\nel("div",{},[revenueCard, el("div",{style:"height:12px"}), actions]),
+      logBox
+    ]);
+  };
+
+  const viewGacha=()=>{
+    if(!state.company.upRole){ state.company.upRole=pick(ROLES); }
+    const upEnds = (()=>{let m=state.company.month+1,y=state.company.year;if(m>12){m-=12;y++;}return {m,y};})();
+    state.company.upEnds=state.company.upEnds||upEnds;
+
+    const end=state.company.upEnds;
+    if(state.company.year>end.y || (state.company.year===end.y && state.company.month>end.m)){
+      state.company.upRole=pick(ROLES);
+      let m=state.company.month+1,y=state.company.year;if(m>12){m-=12;y++;}
+      state.company.upEnds={m,y};
+      log("warn",`【卡池轮换】本期UP：${state.company.upRole}（至 第${y}年${m}月）`);
+    }
+
+    const card=el("div",{class:"card"},[
+      el("h3",{},["抽卡招人"]),
+      el("div",{class:"hint"},[
+        `本期UP：${state.company.upRole}（至 第${state.company.upEnds.y}年${state.company.upEnds.m}月）
+`+
+        `单抽费用：${fmtMoney(5000)}  |  SSR保底：40抽（软保底：20抽后概率提升）
+`+
+        `技能：70%正面 / 30%负面`
+      ]),
+      el("div",{class:"btnrow"},[
+        el("button",{class:"btn good", onclick:()=>pullOne(true)},["单抽"]),
+        el("button",{class:"btn warn", onclick:()=>{for(let i=0;i<10;i++) pullOne(true);}},["十连"]),
+      ]),
+      el("div",{class:"hr"}),
+      el("div",{class:"hint"},[`已抽：${state.gacha.pulls}  | 距离SSR硬保底：${Math.max(0,40-state.gacha.pitySSR)} 抽
+当前资产：${fmtMoney(state.company.assets)}（允许为负）`]),
+    ]);
+
+    const recent=state.people.slice(-12).reverse();
+    const list=el("div",{class:"card"},[
+      el("h3",{},["最近获得"]),
+      el("div",{class:"list"}, recent.map(personCard))
+    ]);
+
+    return el("div",{class:"grid"},[
+      el("div",{},[card]),
+      el("div",{},[list])
+    ]);
+  };
+
+  const viewTeam=()=>{
+    enforceSalaryOrder();
+    const all=[state.player, ...state.people.slice().sort((a,b)=>{
+      const aliveA=(a.dead?1:0), aliveB=(b.dead?1:0);
+      if(aliveA!==aliveB) return aliveA-aliveB;
+      const actA=(a.active?0:1), actB=(b.active?0:1);
+      if(actA!==actB) return actA-actB;
+      return rankOf(b.position)-rankOf(a.position);
+    })];
+
+    return el("div",{class:"card"},[
+      el("h3",{},["成员管理（点卡片看详情）"]),
+      el("div",{class:"hint"},[
+        `规则提醒：
+• 主角=公司所有人（不可离职/不可裁员）。
+• 高职位薪资必须高于低职位（系统自动校正）。
+• 情商低/低薪/任期久/裁员频繁/恋爱冲突 会提高离职概率。
+• 合伙人：有股权，薪酬随营收自动变化。`
+      ]),
+      el("div",{class:"hr"}),
+      el("div",{class:"list"}, all.map(personCard))
+    ]);
+  };
+
+  const viewOrg=()=>{
+    const activeIds=["player", ...state.people.filter(p=>p.active&&!p.dead).map(p=>p.id)];
+    const activePeople=activeIds.map(id=>id==="player"?state.player:findPerson(id)).filter(Boolean);
+
+    const leaderSel=el("select",{});
+    for(const p of activePeople) leaderSel.appendChild(el("option",{value:p.id},[`${p.name}（${p.role}·${positionName(p.position)}）`]));
+
+    const subSel=el("select",{});
+    for(const p of activePeople){ if(p.id==="player") continue; subSel.appendChild(el("option",{value:p.id},[`${p.name}（${p.role}·${positionName(p.position)}）`])); }
+
+    const panel=el("div",{class:"card"},[
+      el("h3",{},["组织结构（领导-下属）"]),
+      el("div",{class:"formgrid"},[
+        el("div",{},[el("label",{},["领导"]), leaderSel]),
+        el("div",{},[el("label",{},["下属"]), subSel]),
+      ]),
+      el("div",{style:"height:8px"}),
+      el("div",{class:"btnrow"},[
+        el("button",{class:"btn good", onclick:()=>assignSub(leaderSel.value, subSel.value)},["设为直属"]),
+      ]),
+      el("div",{class:"hr"}),
+      el("div",{class:"hint"},[
+        `说明：
+• 建立直属关系会带来组织加成与羁绊增长。
+• 但任期越久离职概率会提高，建议晋升/加薪稳定团队。`
+      ])
+    ]);
+
+    const tree=el("div",{class:"card"},[
+      el("h3",{},["当前组织结构"]),
+      ...Object.keys(state.relations).length?[]:[el("div",{class:"hint"},["暂无组织结构。"])],
+      el("div",{class:"list"}, Object.keys(state.relations).map(lid=>{
+        const leader=(lid==="player")?state.player:findPerson(lid);
+        if(!leader||!leader.active||leader.dead) return null;
+        const subs=getSubs(lid).map(id=>findPerson(id)).filter(x=>x&&x.active&&!x.dead);
+        return el("div",{class:"card"},[
+          el("h3",{},[`${leader.name}（${leader.role}·${positionName(leader.position)}）`]),
+          subs.length? el("div",{class:"list"}, subs.map(s=>{
+            const b=getBond(lid,s.id);
+            return el("div",{class:"logitem"},[
+              `${s.name}（${s.role}·${positionName(s.position)}） 羁绊 Lv ${b.toFixed(1)}`,
+              el("div",{style:"height:8px"}),
+              el("div",{class:"btnrow"},[
+                el("button",{class:"btn small secondary", onclick:()=>{openPersonDetail(s.id)}},["查看"]),
+                el("button",{class:"btn small danger", onclick:()=>unassignSub(lid,s.id)},["取消直属"]),
+              ])
+            ]);
+          })) : el("div",{class:"hint"},["暂无直属下属。"])
+        ]);
+      }).filter(Boolean))
+    ]);
+
+    return el("div",{class:"grid"},[
+      el("div",{},[panel]),
+      el("div",{},[tree])
+    ]);
+  };
+
+  const viewWorld=()=>{
+    const rows=INDUSTRIES.slice().sort((a,b)=>industryMarket(b.key)-industryMarket(a.key));
+    const cur=state.company.industry;
+
+    const industrySel=el("select",{});
+    for(const ind of INDUSTRIES){
+      industrySel.appendChild(el("option",{value:ind.key},[`${ind.name}（行情 ${industryMarket(ind.key).toFixed(2)}）`]));
+    }
+    industrySel.value=cur;
+
+    return el("div",{class:"card"},[
+      el("h3",{},["世界行情（各行业实时变化）"]),
+      el("div",{class:"hint"},[
+        `说明：
+• 每推进一个月，所有行业行情都会独立波动。
+• 你可以随时转行（成本很大）。
+• 负资产转行可获得 2 年救助Buff，但负资产转行超过 2 次将直接失败。`
+      ]),
+      el("div",{class:"hr"}),
+      el("div",{class:"formgrid"},[
+        el("div",{},[el("label",{},["选择要转入的行业"]), industrySel]),
+        el("div",{},[
+          el("label",{},["当前状态"]),
+          el("div",{class:"hint"},[
+            `当前行业：${industryMeta(cur).name}
+`+
+            `当前资产：${fmtMoney(state.company.assets)}
+`+
+            `负资产转行次数：${state.company.negativeSwitchCount}/2
+`+
+            `救助Buff剩余：${state.company.rescueBuffMonths}月`
+          ])
+        ])
+      ]),
+      el("div",{style:"height:8px"}),
+      el("div",{class:"btnrow"},[
+        el("button",{class:"btn warn", onclick:()=>switchIndustry(industrySel.value)},["转行（高损失）"]),
+      ]),
+      el("div",{class:"hr"}),
+      el("div",{class:"list"}, rows.map(ind=>{
+        const m=industryMarket(ind.key);
+        const tagClass = ind.key===cur ? "good" : (m>=1.05?"good":m<=0.85?"bad":"warn");
+        return el("div",{class:"logitem"},[
+          `${ind.name}  | 行情 ${m.toFixed(2)}（${marketLabel(m)}）`,
+          el("div",{style:"height:6px"}),
+          el("div",{class:"btnrow"},[
+            ind.key!==cur ? el("button",{class:"btn small secondary", onclick:()=>switchIndustry(ind.key)},["快速转行"]) : el("span",{class:`tag ${tagClass}`},["当前行业"])
+          ])
+        ]);
+      }))
+    ]);
+  };
+
+  const viewRival=()=>{
+    ensureRival();
+    const r=state.company.rivals;
+    const unlocked = r.unlocked;
+    const lvl=scaleLevel();
+    const badge = unlocked ? el("span",{class:"rivalBadge"},["🆚 竞争对手已解锁"]) : el("span",{class:"tag"},["未解锁"]);
+    const deb = state.company.rivalDebuff;
+    return el("div",{class:"grid"},[
+      el("div",{class:"card rivalCard"},[
+        el("div",{class:"h"},["竞争对手"]),
+        el("div",{class:"row"},[
+          el("div",{},[badge]),
+          el("div",{class:"mini"},[ unlocked ? `对手：${r.name}（行业：${industryMeta(r.industry).name}）｜热度 ${Math.round(r.heat||0)}/100` : "公司达到“中型规模”(≥7人)后将出现竞争对手。"])
+        ]),
+        unlocked ? el("div",{class:"mini",style:"margin-top:8px"},[
+          "对手会随机发动：价格战/挖人/舆论战/渠道封锁。你可以用“防护预算”降低触发概率。"
+        ]) : null,
+        unlocked ? el("div",{class:"row",style:"margin-top:10px"},[
+          el("button",{class:"btn",onclick:()=>{
+            const cost = 8000 + lvl*4000;
+            if(state.company.assets < cost){ toast("资金不足"); return; }
+            state.company.assets -= cost;
+            r.shields = Math.min(5, (r.shields||0)+1);
+            log("good", story("good", "对手防护：加固护城河", [
+              `投入：${fmtMoney(cost)}（随规模增加）`,
+              `护城河等级：${r.shields}/5（降低对手攻击触发概率）`
+            ]));
+            render();
+          }},["🛡️ 防护预算"]),
+          el("button",{class:"btn",onclick:()=>{
+            // reset rival industry
+            r.industry = pick(INDUSTRIES.filter(x=>x.key!=="generic")).key;
+            log("warn", story("warn", "情报更新：对手换线", [
+              `${r.name} 的重点转向：${industryMeta(r.industry).name}`
+            ]));
+            render();
+          }},["🛰️ 情报刷新"])
+        ]) : null,
+        unlocked && deb ? el("div",{class:"mini",style:"margin-top:10px"},[
+          `当前干扰：剩余${deb.months}月｜营收×${(deb.rev||1).toFixed(2)}｜离职×${(deb.resign||1).toFixed(2)}`
+        ]) : null
+      ])
+    ]);
+  };
+
+  const viewSettings=()=>{
+    const indSel=el("select",{});
+    for(const ind of INDUSTRIES) indSel.appendChild(el("option",{value:ind.key},[ind.name]));
+    indSel.value=state.company.industry;
+
+    const companyName=el("input",{value:state.company.name});
+    const playerName=el("input",{value:state.player.name});
+    const playerGender=el("select",{}); for(const g of GENDERS) playerGender.appendChild(el("option",{value:g},[g])); playerGender.value=state.player.gender;
+    const playerAge=el("input",{type:"number",min:"18",max:"80",value:state.player.age});
+    const playerRole=el("select",{}); for(const r of ROLES) playerRole.appendChild(el("option",{value:r},[r])); playerRole.value=state.player.role;
+
+    const abilityInputs={};
+    const abGrid=el("div",{class:"formgrid"}, ABILS.map(([k,cn])=>{
+      const inp=el("input",{type:"number",step:"0.5",min:"1",max:"10",value:state.player.abilities[k]});
+      abilityInputs[k]=inp;
+      return el("div",{},[el("label",{},[cn]), inp]);
+    }));
+
+    const initEmp=el("select",{}); ["0","1","2"].forEach(x=>initEmp.appendChild(el("option",{value:x},[x]))); initEmp.value="2";
+    const initPartner=el("select",{}); ["0","1","2"].forEach(x=>initPartner.appendChild(el("option",{value:x},[x]))); initPartner.value="1";
+
+    const randomizePlayer=()=>{
+      const p=mkPerson({kind:"player",rarity:"SR",name:"创业者",role:pick(ROLES), useAiPortrait:true});
+      p.id="player"; p.position="owner"; p.salary=0;
+      state.player=p;
+      save(); render();
+    };
+
+    const applySettings=()=>{
+      state.company.name=companyName.value.trim()||"未命名公司";
+      state.player.name=playerName.value.trim()||"创业者";
+      state.player.gender=playerGender.value;
+      state.player.age=clamp(parseInt(playerAge.value||"28",10),18,80);
+      state.player.role=playerRole.value;
+      for(const [k] of ABILS) state.player.abilities[k]=roundHalf(clamp(Number(abilityInputs[k].value||5),1,10));
+      log("good","【设置】已保存公司与主角设置。");
+      save(); render();
+    };
+
+    const newGame=()=>{
+      const st=defaultState();
+      st.company.name=companyName.value.trim()||"未命名公司";
+      st.company.industry=indSel.value;
+      st.company.worldMarkets=defaultWorldMarkets();
+      st.player=mkPerson({kind:"player",rarity:"SR",name:playerName.value.trim()||"创业者",role:playerRole.value, useAiPortrait:true});
+      st.player.id="player"; st.player.position="owner"; st.player.salary=0;
+      st.player.gender=playerGender.value;
+      st.player.age=clamp(parseInt(playerAge.value||"28",10),18,80);
+      for(const [k] of ABILS) st.player.abilities[k]=roundHalf(clamp(Number(abilityInputs[k].value||5),1,10));
+
+      const empN=parseInt(initEmp.value,10);
+      const parN=parseInt(initPartner.value,10);
+      for(let i=0;i<parN;i++) st.people.push(mkPerson({kind:"partner",rarity:Math.random()<0.5?"SR":"R", name:genName(), useAiPortrait:true}));
+      for(let i=0;i<empN;i++) st.people.push(mkPerson({kind:"employee",rarity:Math.random()<0.55?"R":"SR", name:genName(), useAiPortrait:true}));
+
+      state=st;
+      scheduleYearCrises();
+      log("good","【新档】已创建新存档（世界行情各行业随机；主角=公司所有人）。");
+      save(); render();
+    };
+
+    return el("div",{class:"grid"},[
+      el("div",{},[
+        el("div",{class:"card"},[
+          el("h3",{},["公司设置"]),
+          el("div",{class:"formgrid"},[
+            el("div",{},[el("label",{},["公司名"]), companyName]),
+            el("div",{},[el("label",{},["新档初始行业"]), indSel]),
+            el("div",{},[el("label",{},["初始忠实员工数"]), initEmp]),
+            el("div",{},[el("label",{},["初始合伙人数"]), initPartner]),
+          ]),
+          el("div",{class:"hr"}),
+          el("div",{class:"btnrow"},[
+            el("button",{class:"btn good", onclick:applySettings},["保存主角设置（当前档）"]),
+            el("button",{class:"btn warn", onclick:newGame},["创建新档（覆盖当前）"]),
+          ]),
+        ])
+      ]),
+      el("div",{},[
+        el("div",{class:"card"},[
+          el("h3",{},["主角设置（公司所有人）"]),
+          el("div",{class:"hint"},["主角是独立角色：职位=公司所有人，永不离职，薪资为0。"]),
+          el("div",{class:"formgrid"},[
+            el("div",{},[el("label",{},["名字"]), playerName]),
+            el("div",{},[el("label",{},["性别"]), playerGender]),
+            el("div",{},[el("label",{},["年龄"]), playerAge]),
+            el("div",{},[el("label",{},["岗位"]), playerRole]),
+          ]),
+          el("div",{class:"hr"}),
+          el("h3",{},["主角能力（1~10，0.5档）"]),
+          abGrid,
+          el("div",{class:"hr"}),
+          el("div",{class:"btnrow"},[
+            el("button",{class:"btn secondary", onclick:randomizePlayer},["随机主角"]),
+            el("button",{class:"btn secondary", onclick:()=>{state.player.portrait=randomPortrait(); log("good","【肖像】已为主角生成随机AI头像。"); save(); render();}},["主角随机AI头像"]),
+          ])
+        ])
+      ])
+    ]);
+  };
+
+
+  const openOverlayBox=(title, bodyNodes, buttons=[])=>{
+    const ov = el("div",{class:"overlay"},[
+      el("div",{class:"overbox"},[
+        el("div",{style:"display:flex;justify-content:space-between;align-items:center;gap:10px"},[
+          el("h3",{style:"margin:6px 0"},[title]),
+          el("button",{class:"btn ghost",onclick:()=>ov.remove()},["✕"])
+        ]),
+        ...bodyNodes,
+        buttons.length? el("div",{class:"btnrow"},buttons): el("div",{})
+      ])
+    ]);
+    document.body.appendChild(ov);
+    return ov;
+  };
+
+  const openChangelog=()=>{
+    const lines=[
+      "V2.7 更新：",
+      "• 事件多选项（A/B/C）：不同成本/概率/后果（含行业专属事件包）",
+      "• 事件图鉴/新闻档案：可回看（最多800条）",
+      "• UI 更简洁：主页面缩短描述，新增快捷按钮（图标）",
+      "",
+      "提示：如果你想要更复杂的决策（延迟生效/连锁事件/多回合谈判），告诉我我继续加。"
+    ].join("\n");
+    openOverlayBox("版本与更新说明",[
+      el("div",{class:"hint"},[lines])
+    ]);
+  };
+
+  const openArchive=()=>{
+    const wrap=el("div",{},[]);
+    const filterRow=el("div",{class:"field"},[]);
+    const input=el("input",{class:"input",placeholder:"搜索关键词（标题/内容）"},[]);
+    const sel=el("select",{class:"input",style:"max-width:180px"},[
+      el("option",{value:"all"},["全部类型"]),
+      el("option",{value:"good"},["正向"]),
+      el("option",{value:"warn"},["提醒/中性"]),
+      el("option",{value:"bad"},["负向"]),
+    ]);
+    filterRow.appendChild(sel); filterRow.appendChild(input);
+    const list=el("div",{class:"list"},[]);
+    const renderList=()=>{
+      const q=(input.value||"").trim();
+      const tp=sel.value;
+      list.innerHTML="";
+      const items=(state.archive||[]).filter(it=>{
+        if(tp!=="all" && it.type!==tp) return false;
+        if(!q) return true;
+        return (it.text||"").includes(q);
+      }).slice(0,200);
+      if(!items.length){
+        list.appendChild(el("div",{class:"hint"},["暂无记录（或筛选无结果）"]));
+        return;
+      }
+      for(const it of items){
+        const meta=`Y${it.year} M${it.month} · ${industryMeta(it.industry).name} · ${it.type}`;
+        list.appendChild(el("div",{class:"item"},[
+          el("div",{class:"meta"},[el("div",{},[meta]), el("div",{},[it.t])]),
+          el("pre",{},[it.text])
+        ]));
+      }
+    };
+    input.oninput=renderList; sel.onchange=renderList;
+    renderList();
+    wrap.appendChild(filterRow);
+    wrap.appendChild(el("div",{class:"hr"}));
+    wrap.appendChild(list);
+    openOverlayBox("事件图鉴 / 新闻档案",[
+      wrap
+    ],[
+      el("button",{class:"btn ghost",onclick:()=>{if(confirm("清空档案？")){state.archive=[];save();toast("已清空"); openArchive();}}},["清空档案"]),
+      el("button",{class:"btn",onclick:()=>{}},["关闭"])
+    ]);
+  };
+
+  const loadFromPrompt=()=>{
+    try{
+      const raw=prompt("粘贴存档JSON（从“设置/新档”里导出或你自己备份的）");
+      if(!raw) return;
+      const st=JSON.parse(raw);
+      if(!st||!st.company){alert("存档格式不正确"); return;}
+      SafeStore.set(SAVE_KEY, raw);
+      location.reload();
+    }catch(e){alert("解析失败："+e.message);}
+  };
+
+
+  // Shell render
+  const tabsEl=document.getElementById("tabs");
+  const viewEl=document.getElementById("view");
+  const statsEl=document.getElementById("topStats");
+
+  const quickEl=document.getElementById("quickActions");
+  const renderQuick=()=>{
+    if(!quickEl) return;
+    quickEl.innerHTML="";
+    const mk=(ic,txt,fn)=>el("button",{class:"qbtn",onclick:fn},[el("span",{class:"ic"},[ic]), txt]);
+    quickEl.appendChild(mk("⏭️","下一月",()=>nextMonth()));
+    quickEl.appendChild(mk("🎴","抽卡",()=>{state.ui.tab="gacha";save();render();}));
+    quickEl.appendChild(mk("👥","团队",()=>{state.ui.tab="team";save();render();}));
+    quickEl.appendChild(mk("🌍","行情",()=>{state.ui.tab="world";save();render();}));
+    quickEl.appendChild(mk("🆚","对手",()=>{state.ui.tab="rival";save();render();}));
+    quickEl.appendChild(mk("🗞️","档案",()=>{openArchive();}));
+    quickEl.appendChild(mk("ℹ️","版本",()=>{openChangelog();}));
+    quickEl.appendChild(mk("💾","保存",()=>{save();toast("已保存到本机");}));
+    quickEl.appendChild(mk("📂","读取",()=>{loadFromPrompt();}));
+  };
+
+
+  const renderTabs=()=>{
+    tabsEl.innerHTML="";
+    for(const t of TABS){
+      tabsEl.appendChild(el("div",{class:`tab ${state.ui.tab===t.key?"active":""}`, onclick:()=>{state.ui.tab=t.key;save();render();}},[t.name]));
+    }
+  };
+  const renderStats=()=>{
+    statsEl.innerHTML="";
+    for(const s of topStats()) statsEl.appendChild(el("div",{class:"pill"},[s]));
+  };
+
+  const renderGameOver=()=>{
+    const old=document.getElementById("gameOverOverlay");
+    if(old) old.remove();
+    if(!state.company.gameOver) return;
+    const ov=el("div",{class:"overlay",id:"gameOverOverlay"},[
+      el("div",{class:"overbox"},[
+        el("h3",{},["游戏失败"]),
+        el("div",{class:"hint"},[
+          `原因：${state.company.gameOverReason}
+
+`+
+          "你可以去『设置/新档』创建新档重开。"
+        ]),
+        el("div",{class:"hr"}),
+        el("div",{class:"btnrow"},[
+          el("button",{class:"btn secondary", onclick:()=>{state.ui.tab="settings"; save(); render();}},["去设置/新档"]),
+        ])
+      ])
+    ]);
+    document.body.appendChild(ov);
+  };
+
+  const render=()=>{
+    renderTabs();
+    renderQuick();
+    renderStats();
+    viewEl.innerHTML="";
+
+    if(state.ui.pendingDecision && !state.ui.decisionOverlayOpen){
+      state.ui.decisionOverlayOpen=true;
+      const ev=state.ui.pendingDecision;
+
+      const body=el("div",{},[
+        el("div",{class:"hint"},[story("warn", ev.title, ev.desc||[])]),
+        el("div",{class:"hr"}),
+        el("div",{class:"hint"},["请选择一项：不同成本/概率/后果。（此事件必须处理）"])
+      ]);
+
+      const btns = (ev.options||[]).map(o=>{
+        const pct=Math.round(o.p*100);
+        const label=`${o.key}. ${o.label}`;
+        const sub=`成本 ${fmtMoney(o.cost||0)}｜成功率 ${pct}%`;
+        return el("button",{class:"btn",onclick:()=>resolveDecision(o.key)},[
+          el("div",{},[label]),
+          el("div",{style:"font-size:12px;color:var(--muted);font-weight:700"},[sub])
+        ]);
+      });
+
+      const ov = el("div",{class:"overlay", id:"decisionOverlay"},[
+        el("div",{class:"overbox"},[
+          el("h3",{style:"margin:6px 0"},["决策事件"]),
+          body,
+          el("div",{class:"btnrow"},btns)
+        ])
+      ]);
+      document.body.appendChild(ov);
+      save();
+    }
+
+    if(state.ui.tab==="dashboard") viewEl.appendChild(viewDashboard());
+    else if(state.ui.tab==="gacha") viewEl.appendChild(viewGacha());
+    else if(state.ui.tab==="team") viewEl.appendChild(viewTeam());
+    else if(state.ui.tab==="org") viewEl.appendChild(viewOrg());
+    else if(state.ui.tab==="world") viewEl.appendChild(viewWorld());
+    else if(state.ui.tab==="rival") viewEl.appendChild(viewRival());
+    else if(state.ui.tab==="settings") viewEl.appendChild(viewSettings());
+    else viewEl.appendChild(viewDashboard());
+    renderGameOver();
+  };
+
+  render();
+
+})();
+</script>
+
+  <div id="ceremonyModal" class="modalFull">
+    <div class="ceremony">
+      <div id="burst" class="burst"></div>
+      <div id="confetti" class="confetti"></div>
+      <div class="top">
+        <div>
+          <div class="name" id="cerName">招募成功</div>
+          <div class="mini" id="cerSub"> </div>
+        </div>
+        <button class="btn" id="cerClose">关闭</button>
+      </div>
+      <div class="body">
+        <div class="bigAvatar" id="cerAvatar"></div>
+        <div id="cerText" class="mini"></div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
+  // V2.7：内置头像图库（24个AI风SVG + 6个图标风）
+  const AVATAR_LIBRARY = (() => {
+    const colors = [
+      ["#5bc0ff","#1b2a6b"],["#ffd166","#3b2a0b"],["#58e3a5","#0b3b2a"],["#ff6b6b","#3b0b0b"],
+      ["#b388ff","#2b0b3b"],["#7aa2ff","#0b1a3b"],["#ff9f1c","#3b1e0b"],["#00d4ff","#0b2c3b"],
+    ];
+    const mkSvg = (seed) => {
+      const c = colors[seed % colors.length];
+      const a = (seed*37)%100, b=(seed*91)%100;
+      return `<svg class="svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g${seed}" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="${c[0]}" stop-opacity=".95"/>
+            <stop offset="1" stop-color="${c[1]}" stop-opacity=".95"/>
+          </linearGradient>
+          <filter id="f${seed}" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.6"/>
+          </filter>
+        </defs>
+        <rect width="120" height="120" rx="22" fill="url(#g${seed})"/>
+        <circle cx="${30+a*0.6}" cy="${34+b*0.4}" r="24" fill="rgba(255,255,255,.22)" filter="url(#f${seed})"/>
+        <circle cx="${78-b*0.4}" cy="${76+a*0.3}" r="28" fill="rgba(255,255,255,.18)" filter="url(#f${seed})"/>
+        <path d="M30 92c8-18 52-18 60 0" stroke="rgba(255,255,255,.65)" stroke-width="8" stroke-linecap="round" fill="none"/>
+        <circle cx="46" cy="56" r="6" fill="rgba(255,255,255,.8)"/>
+        <circle cx="74" cy="56" r="6" fill="rgba(255,255,255,.8)"/>
+      </svg>`;
+    };
+    const ai = Array.from({length:24}, (_,i)=>({id:`ai_${i}`, type:"svg", data:mkSvg(i)}));
+    const icons = ["🏢","🧠","🦊","🐼","🦁","🐯"].map((t,i)=>({id:`ic_${i}`, type:"text", data:t}));
+    return [...ai, ...icons];
+  })();
+
+  const renderAvatarFromLib = (entry)=>{
+    if(!entry) return el("div",{},["🙂"]);
+    if(entry.type==="text") return el("div",{style:"font-size:46px"},[entry.data]);
+    // svg string
+    const box=document.createElement("div");
+    box.innerHTML=entry.data;
+    return box.firstElementChild;
+  };
+
+  const pickAvatarLib = ()=> pick(AVATAR_LIBRARY);
